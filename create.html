@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width">
+        <title>Luna Simulations - Create</title>
+        <script src="https://cdn.tailwindcss.com"></script>
+        <script>
+            tailwind.config = {
+                theme: {
+                    extend: {
+                        colors: {
+                            transparent: 'transparent',
+                            current: 'currentColor',
+                            'white': '#ffffff',
+                            'green': '#34D399',
+                            'blue': '#2563EB',
+                            'purple': '#702DB3',
+                            'black': '#000000',
+                            'grey': '#848484',
+                            'bgblue': '#3b82f6',
+                            'bgcyan': '#06b6d4',
+                            'modalDark': '#00000030',
+                            'boxColor': '#e6e6e6',
+                            'runBox': '#22c55e',
+                            'runText': '#15803d',
+                            'transparent': "#ffffff00"
+                        },
+                        spacing: {
+                            '120': '30rem',
+                            '160': '40rem',
+                            '48': '13rem',
+                            '200': '50rem',
+                            '80': '20rem',
+                            '100': '25rem',
+                            '140': '35rem'
+                        }
+                    }
+                }
+            }
+          </script>
+    </head>
+    <body class="grid">
+        <div class="divide-x divide-black float-left">
+            <h1 class="float-left mr-5 pt-2 pl-4 text-2xl font-bold">
+                <a href="index.html">Luna Sim</a>
+            </h1>
+            <button id="stockSelector" class="float-left pl-3 mr-3 mt-3 text-xl">
+                S
+            </button>
+            <button id="cursorSelector" class="float-left pl-3 mr-3 mt-3 text-xl">
+                C
+            </button>
+            <button id="flowSelector" class="float-left pl-3 mr-3 mt-3 text-xl">
+                F
+            </button>
+            <button id="convertSelector" class="float-left pl-3 mr-3 mt-3 text-xl">
+                Co
+            </button>
+            <button id="connectSelector" class="float-left pl-3 mr-3 mt-3 text-xl">
+                N
+            </button>
+            <div>
+                <button id="runSelector" class="mt-2 rounded-lg w-20 h-10 float-left ml-4 mr-5 bg-runBox text-white font-semibold text-xl">
+                    Run
+                </button>
+            </div>
+            <div>
+                <button id="setupSelector" class="bg-slate-200 float-right w-48 h-10 mr-3 mt-2 text-xl rounded-lg">
+                    Untitled Document
+                </button>
+            </div>
+        </div>
+        <canvas id="modelCanvas" width='500' height='500'>
+        <script src="main.js" type="module"></script>
+        -->
+    </body>
+</html>

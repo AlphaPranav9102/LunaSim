@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width">
+        <title>Spiral Simulations</title>
+        <link href="index.css" rel="stylesheet" type="stylesheet" />
+        <script src="https://cdn.tailwindcss.com"></script>
+        <script src="main.js"></script>
+        <script>
+            tailwind.config = {
+                theme: {
+                    extend: {
+                        colors: {
+                            transparent: 'transparent',
+                            current: 'currentColor',
+                            'white': '#ffffff',
+                            'green': '#F22259',
+                            'blue': '#F25C05',
+                            'purple': '#0A6ABF',
+                            'black': '#000000',
+                            'grey': '#848484',
+                            'bgface1': '#f22aa2',
+                            'bgface2': '#702DB3',
+                            'bgface3': '#00beff'
+                        },
+                    }
+                }
+            }
+          </script>
+    </head>
+    <body>
+        <div id="navBar" class="w-screen h-20 bg-white">
+            <div id="logoBar" class="top-0.5">
+                <!--
+                    <div class="w-15 h-15 object-fit float-left">
+                        <img src="./assets/SpiralLogo.png" class="object-cover mt-5 pl-4 w-12">
+                    </div>
+                -->
+                <h1 class="text-2xl font-bold float-left p-4 mt-1 pl-5"><a href="index.html">Luna Sim</a></h1>
+                <a href="create.html">
+                    <button class="text-xl font-bold float-right mt-4 mr-5 ml-2 px-2 border-4 rounded-lg bg-bgface1 text-white border-black">Open</button>
+                </a>
+                <h1 class="text-xl font-bold float-right p-5 px-5"><a href="guide.html">Guide</a></h1>
+            </div>
+        </div>
+        <center>
+            <div class="rotate-6 text-6xl font-bold leading-tight mt-20 w-3/6 rounded-3xl p-5 bg-gradient-to-r from-white to-white mx-25">
+                <div class="-rotate-6">
+                    <h1>
+                    Create 
+                    <span class="text-bgface1">simulations</span>
+                    <br> 
+                    and <span class="text-bgface2">build models</span> 
+                    <br> 
+                    <span class="text-bgface2">all online</span>.
+                    <br> 
+                    Completely <span class="text-bgface3">free</span>.
+                    </h1>
+                </div>
+            </div>
+            <a href="create.html">
+                <button class="text-2xl font-bold mt-10 mb-20 ml-2 p-0.5 px-3 border-4 rounded-lg bg-bgface1 text-white border-black">Try Now!</button>
+            </a>
+        </center>
+    </body>
+</html>
+  </body>
+</html>

@@ -10,21 +10,21 @@ class HyperCanvas {
     }
 
     // TODO: Get data about hyperCanvas and send to engine.js
-    get data(){
+    get data() {
         return 1
     }
 
-    get size(){
+    get size() {
         return [this.canvas.width, this.canvas.height];
     }
 
-    set size(sizing){
+    set size(sizing) {
         this.canvas.width = sizing[0]
         this.canvas.height = sizing[1]
     }
 
     // periodic functions for the calling of added functions to periodic runner
-    runPeriodic(){
+    runPeriodic() {
         this.globalTick++;
         var keys = Object.keys(this.periodicTasks);
 
@@ -36,7 +36,7 @@ class HyperCanvas {
         
     }
 
-    setPeriodic(name, callback, tick, ...args){
+    setPeriodic(name, callback, tick, ...args) {
         this.periodicTasks[name] = {
             callback : callback,
             tick : tick,
@@ -45,7 +45,7 @@ class HyperCanvas {
     }
 
     // calling all validation functions to see if input if for feature
-    detectedInput(event, listener){
+    detectedInput(event, listener) {
         var eventInfo = {
             x : event.pageX,
             y : event.pageY - this.pageOffsetY,
@@ -60,7 +60,7 @@ class HyperCanvas {
     }
 
     //add feature to setPeriodic and detectedInput loop
-    addFeature(feature, drawable = true){
+    addFeature(feature, drawable = true) {
         //todo: determine if redundant keys are useful here (Callback functions, Ans: maybe if method name changes in 2.x)
         this.features[feature.name] = {
             feature : feature,
@@ -77,7 +77,7 @@ class HyperCanvas {
     }
 
     // start periodic and add interval tasks
-    initialize(){
+    initialize() {
         var self = this;
         setInterval(function () { self.runPeriodic() }, 1000/this.frameRate)
         this.setPeriodic("canvas.clear", function () {
@@ -97,7 +97,7 @@ class HyperCanvas {
 
     }
 
-    save(){
+    save() {
 
     }
 

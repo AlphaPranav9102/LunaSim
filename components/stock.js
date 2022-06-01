@@ -1,6 +1,8 @@
 class Stock {
-    constructor(name){
+    constructor(name, hyperCanvas){
         this.name = name
+        this.type = "stock"
+        this.canvas = hyperCanvas
         this.state = {
             x : 0,
             y : 0,
@@ -16,12 +18,14 @@ class Stock {
             resizeInteraction : {
                 corner: ""
             },
-            move : false
+            move : false,
+            flows : {
+                top : null,
+                left : null,
+                bottom : null,
+                right : null
+            }
         }
-    }
-
-    testers(){
-        console.log(this.name)
     }
 
     validate(event){
@@ -98,6 +102,7 @@ class Stock {
                 this.state.b += (this.state.y - event.y)
                 this.state.x = event.x
                 this.state.y = event.y
+                
             }
             else if (this.state.resizeInteraction.corner == "bottom"){
                 this.state.a = event.x - this.state.x

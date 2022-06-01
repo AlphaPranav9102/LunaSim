@@ -15,7 +15,6 @@ class HyperCanvas {
     }
 
     // Changing sizing for the 
-
     get size(){
         return [this.canvas.width, this.canvas.height];
     }
@@ -23,6 +22,18 @@ class HyperCanvas {
     set size(sizing){
         this.canvas.width = sizing[0]
         this.canvas.height = sizing[1]
+    }
+
+    // get every stock reference and return it to the calling function
+    getType(type){
+        metadata = {}
+        var features = Object.keys(this.features);
+        for (const feature in features){
+            if (this.features[feature].type == type){
+                metadata[feature] = this.features[feature]
+            }
+        }
+        return(type)
     }
 
     // periodic functions for the calling of added functions to periodic runner

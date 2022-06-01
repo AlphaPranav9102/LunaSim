@@ -5,16 +5,14 @@ class HyperCanvas {
         this.periodicTasks = {};
         this.features = {};
         this.globalTick = 0;
-        this.pageOffsetY = 50;
+        this.pageOffsetY = 50; // adds offset to canvas to account for header
         this.frameRate = frameRate
     }
 
-    //Idea is to just return the data info for engine.js
+    // TODO: Get data about hyperCanvas and send to engine.js
     get data(){
-        return this.generateData();
+        return 1
     }
-
-    // Changing sizing for the 
 
     get size(){
         return [this.canvas.width, this.canvas.height];
@@ -42,11 +40,11 @@ class HyperCanvas {
         this.periodicTasks[name] = {
             callback : callback,
             tick : tick,
-            args : [].slice.call(arguments, 3) //removes the first three arguments of setPeriodic function
+            args : [].slice.call(arguments, 3) // removes the first three arguments of setPeriodic function
         };
     }
 
-    //calling all validation functions to see if input if for feature
+    // calling all validation functions to see if input if for feature
     detectedInput(event, listener){
         var eventInfo = {
             x : event.pageX,

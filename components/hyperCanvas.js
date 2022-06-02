@@ -5,21 +5,20 @@ class HyperCanvas {
         this.periodicTasks = {};
         this.features = {};
         this.globalTick = 0;
-        this.pageOffsetY = 50;
+        this.pageOffsetY = 50; // adds offset to canvas to account for header
         this.frameRate = frameRate
     }
 
-    //Idea is to just return the data info for engine.js
-    get data(){
-        return this.generateData();
+    // TODO: Get data about hyperCanvas and send to engine.js
+    get data() {
+        return 1
     }
 
-    // Changing sizing for the 
-    get size(){
+    get size() {
         return [this.canvas.width, this.canvas.height];
     }
 
-    set size(sizing){
+    set size(sizing) {
         this.canvas.width = sizing[0]
         this.canvas.height = sizing[1]
     }
@@ -37,7 +36,7 @@ class HyperCanvas {
     }
 
     // periodic functions for the calling of added functions to periodic runner
-    runPeriodic(){
+    runPeriodic() {
         this.globalTick++;
         var keys = Object.keys(this.periodicTasks);
 
@@ -49,16 +48,16 @@ class HyperCanvas {
         
     }
 
-    setPeriodic(name, callback, tick, ...args){
+    setPeriodic(name, callback, tick, ...args) {
         this.periodicTasks[name] = {
             callback : callback,
             tick : tick,
-            args : [].slice.call(arguments, 3) //removes the first three arguments of setPeriodic function
+            args : [].slice.call(arguments, 3) // removes the first three arguments of setPeriodic function
         };
     }
 
-    //calling all validation functions to see if input if for feature
-    detectedInput(event, listener){
+    // calling all validation functions to see if input if for feature
+    detectedInput(event, listener) {
         var eventInfo = {
             x : event.pageX,
             y : event.pageY - this.pageOffsetY,
@@ -73,7 +72,7 @@ class HyperCanvas {
     }
 
     //add feature to setPeriodic and detectedInput loop
-    addFeature(feature, drawable = true){
+    addFeature(feature, drawable = true) {
         //todo: determine if redundant keys are useful here (Callback functions, Ans: maybe if method name changes in 2.x)
         this.features[feature.name] = {
             feature : feature,
@@ -90,7 +89,7 @@ class HyperCanvas {
     }
 
     // start periodic and add interval tasks
-    initialize(){
+    initialize() {
         var self = this;
         setInterval(function () { self.runPeriodic() }, 1000/this.frameRate)
         this.setPeriodic("canvas.clear", function () {
@@ -110,7 +109,7 @@ class HyperCanvas {
 
     }
 
-    save(){
+    save() {
 
     }
 

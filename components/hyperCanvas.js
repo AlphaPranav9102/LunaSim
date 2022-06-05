@@ -25,14 +25,15 @@ class HyperCanvas {
 
     // get every stock reference and return it to the calling function
     getType(type){
-        metadata = {}
+        var metadata = {}
         var features = Object.keys(this.features);
-        for (const feature in features){
-            if (this.features[feature].type == type){
+        for (const feature of features){
+            console.log(feature)
+            if (this.features[feature].feature.type == type){
                 metadata[feature] = this.features[feature]
             }
         }
-        return(type)
+        return(metadata)
     }
 
     // periodic functions for the calling of added functions to periodic runner

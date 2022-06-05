@@ -10,7 +10,7 @@ hyperCanvas.initialize()
 
 var features = {
     "stock" : Stock,
-    "flow" : Flow,
+    "flow" : Flow
 }
 
 // var stockCreator = new CreatorWidget(features.stock, hyperCanvas)

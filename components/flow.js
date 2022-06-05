@@ -4,7 +4,7 @@ class Flow {
     constructor(name, hyperCanvas){
         this.name = name
         this.type = "flow"
-        this.canvas = hyperCanvas
+        this.hyperCanvas = hyperCanvas
         this.state = {
             x1 : 100,
             y1 : 100,
@@ -78,10 +78,11 @@ class Flow {
             }
         }
         else if (event.type == "click"){
-            if (this.state.resize){
+            if (this.state.resize || this.state.move){
                 this.state.resize = false
+                this.state.move = false
+                this.remap(event)
             }
-            this.state.move = false
             isValidated = true
         }
 
@@ -146,8 +147,8 @@ class Flow {
                 context.lineTo((this.state.x1 + this.state.x2-arrowWidth)/2+flowWidth, this.state.y1 + direction)
                 context.lineTo((this.state.x1 + this.state.x2-arrowWidth)/2+flowWidth, this.state.y1 + direction)
                 context.lineTo(this.state.x1, this.state.y1 + direction)
-                context.lineTo(this.state.x1, this.state.y1 - direction)
-                context.lineTo((this.state.x1 + this.state.x2-arrowWidth)/2-flowWidth, this.state.y1 - direction)
+                //context.lineTo(this.state.x1, this.state.y1 - direction)
+                //context.lineTo((this.state.x1 + this.state.x2-arrowWidth)/2-flowWidth, this.state.y1 - direction)
                 context.lineWidth = 5;
                 context.stroke();
 
@@ -163,20 +164,26 @@ class Flow {
                 context.lineTo(this.state.x2-arrowWidth, this.state.y1 - direction)
                 context.lineTo(this.state.x2-arrowWidth, this.state.y1 + direction)
                 context.lineTo(this.state.x1, this.state.y1 + direction)
-                context.lineTo(this.state.x1, this.state.y1 - direction)
-                context.lineTo(this.state.x2-arrowWidth, this.state.y1 - direction)
+                //context.lineTo(this.state.x1, this.state.y1 - direction)
+                //context.lineTo(this.state.x2-arrowWidth, this.state.y1 - direction)
                 context.lineWidth = 5;
                 context.stroke();
 
                 arrowY = this.state.y1
             }
 
+            context.fillStyle = "rgb(0, 125, 0)"
+            context.lineWidth = 3;
+            context.beginPath()
             context.moveTo(this.state.x2-arrowWidth, arrowY - 20)
             context.lineTo(this.state.x2, arrowY)
             context.lineTo(this.state.x2-arrowWidth, arrowY + 20)
             context.lineTo(this.state.x2-arrowWidth, arrowY - 20)
             context.lineTo(this.state.x2, arrowY)
-            context.lineWidth = 3;
+            
+            if (this.state.stock.in != null){
+                context.fill()
+            }
             context.stroke();
 
             if (this.state.selected){
@@ -191,7 +198,6 @@ class Flow {
         }
     }
     boundingBox(x, y, a, b, point){
-        console.log(x, y, a, b, point)
         if (x + a < x){
             x = x + a
             a = Math.abs(a)
@@ -204,7 +210,31 @@ class Flow {
             (y <= point[1] && point[1] <= y+b)){
                 return true
         }
-        else false
+    }
+    remap(event){
+        var metadata = this.hyperCanvas.getType("stock")
+        for (const features of Object.keys(metadata)){
+            var feature = metadata[features].feature
+            if (this.boundingBox(feature.state.x, feature.state.y, feature.state.a/2, feature.state.b, [this.state.x2, this.state.y2])){
+                this.state.stock.in = feature
+                feature.state.flows.left = this
+                console.log(feature.state.flows.left)
+                this.state.x2 = feature.state.x
+                this.state.y2 = feature.state.y + feature.state.b/2
+            }
+            else if (feature.state.flows.left == this){
+                feature.state.flows.left = null
+            }
+            if (this.boundingBox(feature.state.x + feature.state.a/2, feature.state.y, feature.state.a/2, feature.state.b, [this.state.x1, this.state.y1])){
+                this.state.stock.out = feature
+                feature.state.flows.right = this
+                this.state.x1 = feature.state.x + feature.state.a
+                this.state.y1 = feature.state.y + feature.state.b/2
+            }
+            else if (feature.state.flows.right == this){
+                feature.state.flows.left = null
+            }
+        }
     }
 }
 

@@ -3,14 +3,10 @@ class Simulation {
         this.data = structData;
 
         this.dt = parseFloat(this.data.dt);
-        this.endTime = parseFloat(this.data.endTime);
+        this.startTime = parseFloat(this.data.start_time);
+        this.endTime = parseFloat(this.data.end_time);
 
-        this.stockCache = { "time": [] }; // add time also as a "stock" in cache
         this.initStocks(); // set initial values for stocks
-
-        for (var name in this.data.stocks) {
-            this.stockCache[name] = [parseFloat(this.data.stocks[name]["value"])]; // add stock to cache
-        }
     }
 
     /* 
@@ -22,24 +18,37 @@ class Simulation {
         let availableConverters = Object.keys(this.data.converters).sort((a, b) => a.length - b.length).reverse() // sort by length (descending) to prevent substring errors
         if (availableConverters != []) {
             for (var converter of availableConverters) {
-                console.log(converter)
                 if (flowEq.includes(converter)) {
-                    flowEq = flowEq.replace(converter, this.parseFlow(this.data.converters[converter])); // RECURSIVE
+                    flowEq = flowEq.replace(converter, this.parseFlow(this.data.converters[converter]["equation"])); // RECURSIVE
                 }
             }
         }
 
-        // Looks for stock names in expressions and replaces with their respective values
+        // Looks for flow names in expressions and replaces with their respective values
+        for (var stock in this.data.stocks) {;
+            for (var inflow in this.data.stocks[stock]["inflows"]) {
+                if (flowEq.includes(inflow)) {
+                    flowEq = flowEq.replace(inflow, this.parseFlow(this.data.stocks[stock]["inflows"][inflow]["equation"])); // RECURSIVE
+                }
+            }
+            for (var outflow in this.data.stocks[stock]["outflows"]) {
+                if (flowEq.includes(outflow)) {
+                    flowEq = flowEq.replace(outflow, this.parseFlow(this.data.stocks[stock]["outflows"][outflow]["equation"])); // RECURSIVE
+                }
+            }
+        }
+
+        // Looks for stock names in expressions and replaces with their respective values (SAFEVAL)
         let availableStocks = Object.keys(this.data.stocks).sort((a, b) => a.length - b.length).reverse()
         if (availableStocks != []) {
             for (var stock of availableStocks) {
                 if (flowEq.includes(stock)) {
-                    flowEq = flowEq.replace(this.data.stocks[stock]["name"], this.data.stocks[stock]["value"]);
+                    flowEq = flowEq.replace(this.data.stocks[stock]["name"], this.data.stocks[stock]["safeval"]); // not recursive
                 }
             }
         }
 
-        return eval(flowEq); // TODO: Figure out what to do with this
+        return flowEq;
     }
 
     /*
@@ -48,7 +57,11 @@ class Simulation {
     initStocks() {
         for (var stockName in this.data.stocks) {
             let stock = this.data.stocks[stockName];
-            stock["value"] = this.parseFlow(stock["value"]);
+
+            let value = eval(this.parseFlow(stock["equation"]));
+            
+            stock["safeval"] = value;
+            stock["values"].push(value);
         }
     }
 
@@ -63,23 +76,23 @@ class Simulation {
         // Use eval to get value of flows
         let sumInflow = 0;
         for (var i in inflows) {
-            let flow = inflows[i];
-            if (flow.includes("$")) { // check if flow is a uniflow
-                flow = flow.replace('$', '');
-                sumInflow += Math.max(0, eval(this.parseFlow(flow)));
+            let flowEq = inflows[i]["equation"];
+            if (flowEq.includes("$")) { // check if flow is a uniflow
+                flowEq = flowEq.replace('$', '');
+                sumInflow += Math.max(0, eval(this.parseFlow(flowEq)));
             } else {
-                sumInflow += eval(this.parseFlow(inflows[i]));
+                sumInflow += eval(this.parseFlow(flowEq));
             }
         }
 
         let sumOutflow = 0;
         for (var i in outflows) {
-            let flow = outflows[i];
-            if (flow.includes("$")) { // check if flow is a uniflow
-                flow = flow.replace('$', '');
-                sumOutflow += Math.max(0, eval(this.parseFlow(flow)));
+            let flowEq = outflows[i]["equation"];
+            if (flowEq.includes("$")) { // check if flow is a uniflow
+                flowEq = flowEq.replace('$', '');
+                sumOutflow += Math.max(0, eval(this.parseFlow(flowEq)));
             } else {
-                sumOutflow += eval(this.parseFlow(outflows[i]));
+                sumOutflow += eval(this.parseFlow(flowEq));
             }
         }
 
@@ -90,19 +103,21 @@ class Simulation {
     Runs model using Euler's method.
     */
     euler() {
-        for (var t = 0; t <= this.endTime; t += this.dt) { // iterate over time
-            this.stockCache["time"].push(t); // add new time to cache
-            for (var stockName in this.data.stocks) { // iterate over stocks
+        for (var t = this.startTime + this.dt; t <= this.endTime; t += this.dt) { // iterate over time (skip start time as that was covered in this.initStocks)
+            console.log(t)
+            // Calculate new values for all stocks and their flows
+            for (var stockName in this.data.stocks) {
                 let stock = this.data.stocks[stockName];
 
                 if (stock["isNN"] == "true") { // check if stock is non-negative
-                    stock["value"] = Math.max(0,(parseFloat(stock["value"]) + this.dydt(stock) * this.dt)).toString();
+                    stock["values"].push(Math.max(0,(stock["safeval"] + this.dydt(stock) * this.dt)));
                 } else {
-                    stock["value"] = (parseFloat(stock["value"]) + this.dydt(stock) * this.dt).toString();
+                    stock["values"].push(stock["safeval"] + this.dydt(stock) * this.dt);
                 }
 
-                this.stockCache[stockName].push(parseFloat(stock["value"])) // add new value to cache
+                stock["safeval"] = stock["values"][stock["values"].length - 1]; // update safeval
             }
+
         }
     }
 
@@ -110,8 +125,8 @@ class Simulation {
     Runs model using 4th order Runge-Kutta method.
     */
     rk4() {
-        for (var t = 0; t <= this.endTime; t += this.dt) { // iterate over time
-            this.stockCache["time"].push(t); // add new time to cache
+        for (var t = 0; t <= this.data.endTime; t += this.data.dt) { // iterate over time
+            this.cache["time"].push(t); // add new time to cache
             for (var stockName in this.data.stocks) { // iterate over stocks
                 let stock = this.data.stocks[stockName];
                 let y_0 = parseFloat(stock["value"]); // current value
@@ -135,7 +150,7 @@ class Simulation {
                     stock["value"] = (y_0 + (k1 + 2 * k2 + 2 * k3 + k4) / 6).toString(); 
                 }
 
-                this.stockCache[stockName].push(parseFloat(stock["value"])); // add new value to cache
+                this.cache[stockName].push(parseFloat(stock["value"])); // add new value to cache
             }
         }
     }
@@ -150,7 +165,5 @@ class Simulation {
         } else if (this.data["integration_method"] == "rk4") {
             this.rk4();
         }
-
-        return this.stockCache;
     }
 }

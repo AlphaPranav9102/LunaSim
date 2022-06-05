@@ -23,6 +23,19 @@ class HyperCanvas {
         this.canvas.height = sizing[1]
     }
 
+    // get every stock reference and return it to the calling function
+    getType(type){
+        var metadata = {}
+        var features = Object.keys(this.features);
+        for (const feature of features){
+            console.log(feature)
+            if (this.features[feature].feature.type == type){
+                metadata[feature] = this.features[feature]
+            }
+        }
+        return(metadata)
+    }
+
     // periodic functions for the calling of added functions to periodic runner
     runPeriodic() {
         this.globalTick++;

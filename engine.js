@@ -14,37 +14,31 @@ class Simulation {
     Example: 'converter1*converter2+stock1' --> '1*2+3'
     */
     parseFlow(flowEq) {
-        // Looks for converter names in expressions and replaces with their respective values
-        let availableConverters = Object.keys(this.data.converters).sort((a, b) => a.length - b.length).reverse() // sort by length (descending) to prevent substring errors
-        if (availableConverters != []) {
-            for (var converter of availableConverters) {
-                if (flowEq.includes(converter)) {
-                    flowEq = flowEq.replace(converter, this.parseFlow(this.data.converters[converter]["equation"])); // RECURSIVE
-                }
+        let objects = {} // stores all stocks, converters, and flows and their respective equation/safeval
+
+        for (var stock in this.data.stocks) {
+            objects[stock] = this.data.stocks[stock]["safeval"];
+
+            // add the inflows and outflows to the available objects
+            for (var flow in this.data.stocks[stock]["inflows"]) {
+                objects[flow] = this.data.stocks[stock]["inflows"][flow]["equation"];
             }
+            for (var flow in this.data.stocks[stock]["outflows"]) {
+                objects[flow] = this.data.stocks[stock]["outflows"][flow]["equation"];
+            }
+
         }
 
-        // Looks for flow names in expressions and replaces with their respective values
-        for (var stock in this.data.stocks) {;
-            for (var inflow in this.data.stocks[stock]["inflows"]) {
-                if (flowEq.includes(inflow)) {
-                    flowEq = flowEq.replace(inflow, this.parseFlow(this.data.stocks[stock]["inflows"][inflow]["equation"])); // RECURSIVE
-                }
-            }
-            for (var outflow in this.data.stocks[stock]["outflows"]) {
-                if (flowEq.includes(outflow)) {
-                    flowEq = flowEq.replace(outflow, this.parseFlow(this.data.stocks[stock]["outflows"][outflow]["equation"])); // RECURSIVE
-                }
-            }
+        for (var converter in this.data.converters) {
+            objects[converter] = this.data.converters[converter]["equation"];
         }
 
-        // Looks for stock names in expressions and replaces with their respective values (SAFEVAL)
-        let availableStocks = Object.keys(this.data.stocks).sort((a, b) => a.length - b.length).reverse()
-        if (availableStocks != []) {
-            for (var stock of availableStocks) {
-                if (flowEq.includes(stock)) {
-                    flowEq = flowEq.replace(this.data.stocks[stock]["name"], this.data.stocks[stock]["safeval"]); // not recursive
-                }
+        let sortedObjects = Object.keys(objects).sort((a, b) => a.length - b.length).reverse() // sort by length (descending) to prevent substring errors
+
+        // Call parseFlow recursively on all objects to replace the names with their respective values
+        for (var object of sortedObjects) {
+            if (flowEq.includes(object)) {
+                flowEq = flowEq.replace(object, '(' + objects[object] + ')'); // RECURSIVE
             }
         }
 
@@ -104,7 +98,6 @@ class Simulation {
     */
     euler() {
         for (var t = this.startTime + this.dt; t <= this.endTime; t += this.dt) { // iterate over time (skip start time as that was covered in this.initStocks)
-            console.log(t)
             // Calculate new values for all stocks and their flows
             for (var stockName in this.data.stocks) {
                 let stock = this.data.stocks[stockName];

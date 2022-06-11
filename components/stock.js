@@ -42,7 +42,7 @@ class Stock {
                 this.state.resizeInteraction.corner = "top"
                 validated = true
 
-                console.log(1, this.state.x, event.x, this.state.y, event.y)
+                //console.log(1, this.state.x, event.x, this.state.y, event.y)
 
             } 
             else if ((this.boundingBox(this.state.x + this.state.a - 10, this.state.y + this.state.b - 10, 20, 20, [event.x, event.y])&& 
@@ -52,23 +52,23 @@ class Stock {
                 this.state.resizeInteraction.corner = "bottom"
                 validated = true
 
-                console.log(2)
+                //console.log(2)
             }
             else if ((this.boundingBox(this.state.x, this.state.y, this.state.a, this.state.b, [event.x, event.y]))){
                 if (this.state.selected){
                     this.state.move = true
                     this.cache(event)
-                    console.log(this.state)
+                    //console.log(this.state)
                 }
                 this.state.selected = true
                 validated = true
 
-                console.log(4)
+                //console.log(4)
             }
             else {
                 this.state.selected = false
 
-                console.log(5)
+                //console.log(5)
             }
         }
         else if (event.type == "mousemove"){

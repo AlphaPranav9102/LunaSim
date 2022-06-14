@@ -24,6 +24,9 @@ class Stock {
                 left : null,
                 bottom : null,
                 right : null
+            },
+            metadata : {
+                
             }
         }
     }

@@ -75,6 +75,7 @@ class HyperCanvas {
     //add feature to setPeriodic and detectedInput loop
     addFeature(feature, drawable = true) {
         //todo: determine if redundant keys are useful here (Callback functions, Ans: maybe if method name changes in 2.x)
+        //todo: setup id/name system
         this.features[feature.name] = {
             feature : feature,
             verifyCallback : feature.validate,

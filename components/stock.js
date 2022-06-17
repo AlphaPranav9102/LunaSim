@@ -2,7 +2,7 @@ class Stock {
     constructor(name, hyperCanvas){
         this.name = name
         this.type = "stock"
-        this.canvas = hyperCanvas
+        this.hyperCanvas = hyperCanvas
         this.state = {
             x : 0,
             y : 0,
@@ -13,6 +13,7 @@ class Stock {
                 y : 0,
             },
             creation : true,
+            created : true,
             selected : false,
             resize : false,
             resizeInteraction : {
@@ -26,15 +27,23 @@ class Stock {
                 right : null
             },
             metadata : {
-                
+                name : "",
+                equation : "",
+                stockType : false
             }
         }
     }
 
     validate(event){
         var validated = false
-
-        if (event.type == "mousedown"){
+        
+        if (event.type == "KeyE"){
+           if (this.state.selected == true){
+               console.log(this.state.metadata)
+               this.hyperCanvas.getMenuText(this)
+           } 
+        }
+        else if (event.type == "mousedown"){
             if (this.state.creation){
                 validated = true;
             }
@@ -85,6 +94,10 @@ class Stock {
             }
             this.state.move = false
             validated = true
+            if (this.state.created){
+                this.state.created = false
+                this.hyperCanvas.getMenuText(this)
+            }
         }
         if (validated){
             return true
@@ -98,6 +111,7 @@ class Stock {
             this.state.creation = false
             this.state.resize = true
             this.state.resizeInteraction.corner = "bottom"
+            this.state.created = true
         }
         else if (this.state.resize){
             if (this.state.resizeInteraction.corner == "top"){
@@ -138,6 +152,9 @@ class Stock {
         context.lineWidth = 5
         context.rect(this.state.x, this.state.y, this.state.a, this.state.b)
         context.fill()
+        context.font = '18px verdana';
+        context.fillStyle = "rgb(0, 0, 125)"
+        context.fillText(this.state.metadata.name, (this.state.x+this.state.a/2) - this.state.metadata.name.length*5, this.state.y+this.state.b+35);
         context.stroke()
 
         if (this.state.selected){

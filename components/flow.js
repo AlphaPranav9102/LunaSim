@@ -15,6 +15,7 @@ class Flow {
                 y : 0,
             },
             creation : true,
+            created : true,
             selected : false,
             resize : false,
             resizeInteraction : {
@@ -24,12 +25,23 @@ class Flow {
             stock : {
                 in : null,
                 out : null
+            },
+            metadata : {
+                name : "",
+                equation : "",
+                flowType : false
             }
         }
     }
     validate(event) {
         var isValidated = false
-        if (event.type == "mousedown") {
+        if (event.type == "KeyE"){
+            if (this.state.selected == true){
+                console.log(this.state.metadata)
+                this.hyperCanvas.getMenuText(this)
+            } 
+        }
+        else if (event.type == "mousedown") {
             if (this.state.creation == true){
                 isValidated = true
             }
@@ -84,6 +96,10 @@ class Flow {
                 this.remap(event)
             }
             isValidated = true
+            if (this.state.created == true){
+                this.state.created = false
+                this.hyperCanvas.getMenuText(this)
+            }
         }
 
         if (isValidated == true){
@@ -102,6 +118,7 @@ class Flow {
             this.state.x2 = event.x
             this.state.y2 = event.y
             this.state.resizeInteraction.corner = "right"
+            this.state.created = true
         }
         else if (this.state.resize == true) {
             if (this.state.resizeInteraction.corner == "left") {
@@ -180,6 +197,9 @@ class Flow {
             context.lineTo(this.state.x2-arrowWidth, arrowY + 20)
             context.lineTo(this.state.x2-arrowWidth, arrowY - 20)
             context.lineTo(this.state.x2, arrowY)
+            context.font = '18px verdana';
+            context.fillStyle = "rgb(0, 0, 125)"
+            context.fillText(this.state.metadata.name, (this.state.x1 + this.state.x2)/2 - this.state.metadata.name.length*5 - 10, Math.max(this.state.y1, this.state.y2)+35)
             
             if (this.state.stock.in != null){
                 context.fill()

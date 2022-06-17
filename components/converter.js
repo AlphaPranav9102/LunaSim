@@ -14,14 +14,25 @@ class Converter {
                 y : 0,
             },
             creation : true,
+            created : false,
             selected : false,
             resize : false,
-            move : false
+            move : false,
+            metadata : {
+                name : "",
+                equation : ""
+            }
         }
     }
     validate(event){
         var isValidated = false
 
+        if (event.type == "KeyE"){
+            if (this.state.selected == true){
+                console.log(this.state.metadata)
+                this.hyperCanvas.getMenuText(this)
+            } 
+        }
         if (event.type == "mousedown"){
             if (this.state.creation){
                 isValidated = true
@@ -56,6 +67,10 @@ class Converter {
             }
             this.state.move = false
             isValidated = true
+            if (this.state.created == true){
+                this.state.created = false
+                this.hyperCanvas.getMenuText(this)
+            }
         }
         if (isValidated){
             return true
@@ -68,6 +83,7 @@ class Converter {
             this.state.y = event.y
             this.state.creation = false
             this.state.resize = true
+            this.state.created = true
         }
         else if (this.state.resize){
             this.state.rx = event.x - this.state.x
@@ -100,8 +116,14 @@ class Converter {
                 context.strokeStyle = "rgb(0, 0, 125)"
                 context.fillStyle = "rgb(0, 0, 125)"
                 context.fillRect(this.state.x+this.state.rx-10, this.state.y+this.state.ry-10, 20, 20)
+                //context.fillRect(this.state.x-10, this.state.y-10, 20, 20)
                 context.stroke()
             }
+
+            context.font = '18px verdana';
+            context.fillStyle = "rgb(0, 0, 125)"
+            context.fillText(this.state.metadata.name, this.state.x - this.state.metadata.name.length*5, this.state.y+this.state.r+35)
+            
         }
     }
 

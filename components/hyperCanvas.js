@@ -7,6 +7,8 @@ class HyperCanvas {
         this.globalTick = 0;
         this.pageOffsetY = 50; // adds offset to canvas to account for header
         this.frameRate = frameRate
+        this.menu = {}
+        this.menuUsage = 0
     }
 
     // TODO: Get data about hyperCanvas and send to engine.js
@@ -108,7 +110,25 @@ class HyperCanvas {
         this.canvas.addEventListener("mousedown", function (event) {self.detectedInput(event, "mousedown")})
         this.canvas.addEventListener("mousemove", function (event) {self.detectedInput(event, "mousemove")})
         this.canvas.addEventListener("click", function (event) {self.detectedInput(event, "click")})
+        this.canvas.addEventListener("keydown", function (event) {
+            console.log(self.menuUsage)
+            if (event.code == "KeyE" && self.menuUsage == 0){
+                self.detectedInput(event, "KeyE")
 
+            }
+        })
+
+        this.setPeriodic("menu.used", function () {
+            self.menuUsage = 0
+            for (const value of Object.values(self.menu)){
+                self.menuUsage += value.state.using
+            }
+        }, 1)
+
+    }
+
+    getMenuText(feature){
+        this.menu[feature.type].getInfo(feature)
     }
 
     save() {

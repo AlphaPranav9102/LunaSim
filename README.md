@@ -1,2 +1,2 @@
 # LunaSim
-LunaSim is a free system dynamics modeling software that runs in your browser.
+LunaSim is a system dynamics modeling software that runs in your browser.

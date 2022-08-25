@@ -1,0 +1,38 @@
+{
+    "stocks": {
+      "stock1": {
+        "name": "stock1",
+        "isNN": "false",
+
+        "values": [],
+        "safeval": null,
+        "equation": "flow1 + flow2",
+
+        "inflows": {
+          "flow1": {
+              "values": [],
+              "equation": "1"
+          }
+        },
+
+        "outflows": {
+            "flow2": {
+                "values": [],
+                "equation": "1"
+            }
+        }
+      }
+    },
+
+    "converters": {
+      "converter1": {
+        "values": [],
+        "equation": "1"
+      }
+    },
+    
+    "integration_method": "euler",
+    "dt": 1,
+    "start_time": 0,
+    "end_time": 10
+}

@@ -35,6 +35,12 @@ class Connector {
                     validated = true
                 }
             }
+            else if (this.onProjection(event.x, event.y)){
+                this.selected = true
+            }
+            else {
+                this.selected = false
+            }
             
         }
         else if (event.type == "mousemove"){
@@ -80,14 +86,17 @@ class Connector {
     }
 
     draw(context){
-        console.log(this.state.connection)
         if (this.state.connection.in == null){
             return false
         }
-        context.strokeStyle = "rgb(0, 0, 0)"
         context.fillStyle = "rgb(255, 255, 255)"
         context.beginPath()
-        context.lineWidth = 5
+        if (this.selected){
+            context.strokeStyle = "rgb(0, 0, 125)"
+        }
+        else {
+            context.strokeStyle = "rgb(0, 0, 0)"
+        }
         context.moveTo(this.state.connection.in.state.center.x, this.state.connection.in.state.center.y)
         try {
             context.lineTo(this.state.connection.out.state.center.x, this.state.connection.out.state.center.y)
@@ -97,15 +106,7 @@ class Connector {
             context.lineTo(this.state.connection.out.x, this.state.connection.out.y)
         }
         context.stroke()
-
-        if (this.state.selected){
-            context.beginPath()
-            context.strokeStyle = "rgb(0, 0, 125)"
-            context.fillStyle = "rgb(0, 0, 125)"
-            context.fillRect(this.state.x-10, this.state.y-10, 20, 20)
-            context.fillRect(this.state.x+this.state.a-10, this.state.y+this.state.b-10, 20, 20)
-            context.stroke()
-        }
+        context.strokeStyle = "rgb(0, 0, 0)"
     }
 
     onObject(x, y, type){
@@ -141,25 +142,35 @@ class Connector {
         }
     }
 
-    projected(x){
-        yRise = Math.max(this.state.y2-this.state.y1) - Math.min(this.state.y2-this.state.y1)
-        xRun = Math.max(this.state.x2-this.state.x1) - Math.min(this.state.x2-this.state.x1)
-        slope = yRise/xRun
-        xDist = x - Math.min(this.state.x2-this.state.x1)
-        return(Math.min(this.state.y2-this.state.y1) + xDist*slope)
-    }
-
-    //is this needed
-    remap(event){
-        if (this.state.flows.left != null){
-            this.state.flows.left.state.x2 = this.state.x
-            this.state.flows.left.state.y2 = this.state.y + this.state.b/2
+    onProjection(x, y){
+        if (this.state.connection.in.state.center.x <= this.state.connection.out.state.center.x){
+            var yRise = (this.state.connection.out.state.center.y-this.state.connection.in.state.center.y)
+            var xRun = (this.state.connection.out.state.center.x-this.state.connection.in.state.center.x)
+            var xBase = this.state.connection.in.state.center.x
+            var yBase = this.state.connection.in.state.center.y
         }
-        if (this.state.flows.right != null){
-            this.state.flows.right.state.x1 = this.state.x + this.state.a
-            this.state.flows.right.state.y1 = this.state.y + this.state.b/2
+        else {
+            var yRise = (this.state.connection.in.state.center.y-this.state.connection.out.state.center.y)
+            var xRun = (this.state.connection.in.state.center.x-this.state.connection.out.state.center.x)
+            var xBase = this.state.connection.out.state.center.x
+            var yBase = this.state.connection.out.state.center.y
         }
-
+        var slope = yRise/xRun
+        
+        if (Math.min(this.state.connection.in.state.center.x, this.state.connection.out.state.center.x) <= x && x <= Math.max(this.state.connection.in.state.center.x, this.state.connection.out.state.center.x)){
+            //console.log(x - Math.min(this.state.connection.in.state.center.x, this.state.connection.out.state.center.x), slope)
+            var yPoint = (x - xBase)*slope + yBase
+            //console.log(yPoint, y)
+            if (Math.abs(yPoint - y) < 10){
+                return true
+            }
+            else {
+                return false
+            }
+        }
+        else {
+            return false
+        }
     }
 }
 

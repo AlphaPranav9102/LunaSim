@@ -21,10 +21,15 @@ class Converter {
             metadata : {
                 name : "",
                 equation : ""
+            },
+            center : {
+                x: null,
+                y: null
             }
         }
     }
-    validate(event){
+
+    validate(event, hitbox=false){
         var isValidated = false
 
         if (event.type == "KeyE"){
@@ -40,20 +45,26 @@ class Converter {
             else if ((this.boundingBox(this.state.x+this.state.rx-10, this.state.y+this.state.ry-10, 20, 20, [event.x, event.y])) && 
                 (this.state.selected)){
                 
-                this.state.resize = true
+                if (!hitbox){
+                    this.state.resize = true
+                }
                 isValidated = true
             }
             else if ((this.boundingBox(this.state.x-this.state.r, this.state.y-this.state.r, 2*this.state.r, 2*this.state.r, [event.x, event.y]))){
-                if (this.state.selected){
-                    this.state.move = true
-                    this.cache(event)
-                    //console.log(this.state)
+                if (!hitbox){
+                    if (this.state.selected){
+                        this.state.move = true
+                        this.cache(event)
+                        //console.log(this.state)
+                    }
+                    this.state.selected = true
                 }
-                this.state.selected = true
                 isValidated = true
             }
             else {
-                this.state.selected = false
+                if (!hitbox){
+                    this.state.selected = false
+                }
             }
         }
         else if (event.type == "mousemove"){
@@ -81,6 +92,8 @@ class Converter {
         if (this.state.creation){
             this.state.x = event.x
             this.state.y = event.y
+            this.state.center.x = this.state.x
+            this.state.center.y = this.state.y
             this.state.creation = false
             this.state.resize = true
             this.state.created = true
@@ -93,6 +106,8 @@ class Converter {
         else if (this.state.move){
             this.state.x += event.x - this.state.prevInteraction.x
             this.state.y += event.y - this.state.prevInteraction.y
+            this.state.center.x = this.state.x
+            this.state.center.y = this.state.y
         }
 
         this.cache(event)
@@ -106,8 +121,10 @@ class Converter {
     draw(context){
         if (this.state.creation == false){
             context.beginPath()
-            context.strokeStyle = "rgb(0, 0, 0)"
+            context.strokeSt
             context.arc(this.state.x, this.state.y, this.state.r, 0, 2 * Math.PI, false)
+            context.fillStyle = "white"
+            context.fill()
             context.lineWidth = 5
             context.stroke()
 

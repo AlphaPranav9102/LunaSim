@@ -6,8 +6,8 @@ class Stock {
         this.state = {
             x : 0,
             y : 0,
-            a : 0,
-            b : 0,
+            a : 100,
+            b : 100,
             prevInteraction : {
                 x : 0,
                 y : 0,
@@ -30,11 +30,18 @@ class Stock {
                 name : "",
                 equation : "",
                 stockType : false
+            },
+            center : {
+                x: null,
+                y: null
             }
         }
     }
 
-    validate(event){
+    validate(event, hitbox=false){
+        this.state.center.x = this.state.x + this.state.a/2
+        this.state.center.y = this.state.y + this.state.b/2
+
         var validated = false
         
         if (event.type == "KeyE"){
@@ -50,8 +57,10 @@ class Stock {
             else if ((this.boundingBox(this.state.x - 10, this.state.y - 10, 20, 20, [event.x, event.y]))&&
                 (this.state.selected)){
 
-                this.state.resize = true
-                this.state.resizeInteraction.corner = "top"
+                if (!hitbox){
+                    this.state.resize = true
+                    this.state.resizeInteraction.corner = "top"
+                }
                 validated = true
 
                 //console.log(1, this.state.x, event.x, this.state.y, event.y)
@@ -60,19 +69,26 @@ class Stock {
             else if ((this.boundingBox(this.state.x + this.state.a - 10, this.state.y + this.state.b - 10, 20, 20, [event.x, event.y])&& 
                 this.state.selected)){
 
-                this.state.resize = true
-                this.state.resizeInteraction.corner = "bottom"
+
+                if (!hitbox){
+                    this.state.resize = true
+                    this.state.resizeInteraction.corner = "bottom"
+                }
                 validated = true
 
                 //console.log(2)
             }
             else if ((this.boundingBox(this.state.x, this.state.y, this.state.a, this.state.b, [event.x, event.y]))){
-                if (this.state.selected){
-                    this.state.move = true
-                    this.cache(event)
-                    //console.log(this.state)
+                if (!hitbox){
+                    if (this.state.selected){
+                        this.state.move = true
+                        this.cache(event)
+                        //console.log(this.state)
+                    }
+                
+                    this.state.selected = true
                 }
-                this.state.selected = true
+                
                 validated = true
 
                 //console.log(4)
@@ -115,15 +131,19 @@ class Stock {
         }
         else if (this.state.resize){
             if (this.state.resizeInteraction.corner == "top"){
-                this.state.a += (this.state.x - event.x)
-                this.state.b += (this.state.y - event.y)
-                this.state.x = event.x
-                this.state.y = event.y
+                if (this.state.a + (this.state.x - event.x) > 100){
+                    this.state.a += (this.state.x - event.x)
+                    this.state.x = event.x
+                }
+                if (this.state.b + (this.state.y - event.y) > 100){
+                    this.state.b += (this.state.y - event.y)
+                    this.state.y = event.y
+                }
                 
             }
             else if (this.state.resizeInteraction.corner == "bottom"){
-                this.state.a = event.x - this.state.x
-                this.state.b = event.y - this.state.y
+                this.state.a = Math.max(event.x - this.state.x, 100)
+                this.state.b = Math.max(event.y - this.state.y, 100)
             }
             this.remap(event)
         }

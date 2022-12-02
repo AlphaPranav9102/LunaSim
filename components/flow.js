@@ -30,11 +30,20 @@ class Flow {
                 name : "",
                 equation : "",
                 flowType : false
+            },
+            center : {
+                x: null,
+                y: null
             }
         }
     }
-    validate(event) {
+
+    validate(event, hitbox=false){
+        this.state.center.x = (this.state.x1 + this.state.x2)/2
+        this.state.center.y = (this.state.y1 + this.state.y2)/2
+
         var isValidated = false
+
         if (event.type == "KeyE"){
             if (this.state.selected == true){
                 console.log(this.state.metadata)
@@ -46,41 +55,53 @@ class Flow {
                 isValidated = true
             }
             else if (this.boundingBox(this.state.x1 - 10, this.state.y1 - 10, 20, 20, [event.x, event.y]) && this.state.selected){
-                this.state.resize = true
-                this.state.resizeInteraction.corner = "left"
+                if (!hitbox){
+                    this.state.resize = true
+                    this.state.resizeInteraction.corner = "left"
+                }
                 isValidated = true
             }
             else if (this.boundingBox(this.state.x2 - 10, this.state.y2 - 10, 20, 20, [event.x, event.y]) && this.state.selected){
-                this.state.resize = true
-                this.state.resizeInteraction.corner = "right"
+                if (!hitbox){
+                    this.state.resize = true
+                    this.state.resizeInteraction.corner = "right"
+                }
                 isValidated = true
             }
             else if (this.boundingBox(this.state.x1, this.state.y1-10, Math.abs(this.state.x1 - this.state.x2 + 15)/2, 20, [event.x, event.y])){
-                if (this.state.selected){
-                    this.state.move = true
-                    this.cache(event)
+                if (!hitbox){
+                    if (this.state.selected){
+                        this.state.move = true
+                        this.cache(event)
+                    }
+                    this.state.selected = true
                 }
-                this.state.selected = true
                 isValidated = true
             }
             else if (this.boundingBox((this.state.x1 + this.state.x2 - 15)/2-10, this.state.y1-10, 20, this.state.y2 + 10, [event.x, event.y])){
-                if (this.state.selected){
-                    this.state.move = true
-                    this.cache(event)
+                if (!hitbox){
+                    if (this.state.selected){
+                        this.state.move = true
+                        this.cache(event)
+                    }
+                    this.state.selected = true
                 }
-                this.state.selected = true
                 isValidated = true
             }
             else if (this.boundingBox((this.state.x1 + this.state.x2 - 15)/2-10, this.state.y2-10, Math.abs(this.state.x1 - this.state.x2 + 15)/2+10, 20, [event.x, event.y])){
-                if (this.state.selected){
-                    this.state.move = true
-                    this.cache(event)
+                if (!hitbox){
+                    if (this.state.selected){
+                        this.state.move = true
+                        this.cache(event)
+                    }
+                    this.state.selected = true
                 }
-                this.state.selected = true
                 isValidated = true
             }
             else {
-                this.state.selected = false
+                if (!hitbox){
+                    this.state.selected = false
+                }
             }
 
         }
@@ -113,8 +134,8 @@ class Flow {
         if (this.state.creation == true){
             this.state.creation = false
             this.state.resize = true
-            this.state.x1 = event.x
-            this.state.y1 = event.y
+            this.state.x1 = event.x-50
+            this.state.y1 = event.y-50
             this.state.x2 = event.x
             this.state.y2 = event.y
             this.state.resizeInteraction.corner = "right"
@@ -122,12 +143,14 @@ class Flow {
         }
         else if (this.state.resize == true) {
             if (this.state.resizeInteraction.corner == "left") {
-                this.state.x1 = event.x
+                if (Math.abs(event.x - this.state.x2) > 100  && event.x < this.state.x2){
+                    this.state.x1 = event.x
+                }
                 this.state.y1 = event.y
             }
 
             else if (this.state.resizeInteraction.corner == "right") {
-                this.state.x2 = event.x
+                this.state.x2 = Math.max(event.x, this.state.x1+100)
                 this.state.y2 = event.y
             }
         }

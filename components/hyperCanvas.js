@@ -7,11 +7,17 @@ class HyperCanvas {
         this.globalTick = 0;
         this.pageOffsetY = 50; // adds offset to canvas to account for header
         this.frameRate = frameRate
+        this.menu = {}
+        this.menuUsage = 0
     }
 
     // TODO: Get data about hyperCanvas and send to engine.js
     get data() {
-        return 1
+        stocks = {}
+
+        for (const key of Object.keys(this.features)){
+             
+        }
     }
 
     get size() {
@@ -23,7 +29,7 @@ class HyperCanvas {
         this.canvas.height = sizing[1]
     }
 
-    // get every stock reference and return it to the calling function
+    // get every widget reference and return it to the calling function
     getType(type){
         var metadata = {}
         var features = Object.keys(this.features);
@@ -41,18 +47,20 @@ class HyperCanvas {
         this.globalTick++;
         var keys = Object.keys(this.periodicTasks);
 
-        for (const key of keys){
-            if (this.globalTick % this.periodicTasks[key].tick == 0) {
-                this.periodicTasks[key].callback.apply(null, this.periodicTasks[key].args)
+        for (const priority of [1, 2, 3, 4, 5]){
+            for (const key of keys){
+                if (this.globalTick % this.periodicTasks[key].tick == 0 && this.periodicTasks[key].priority == priority) {
+                    this.periodicTasks[key].callback.apply(null, this.periodicTasks[key].args)
+                }
             }
         }
-        
     }
 
-    setPeriodic(name, callback, tick, ...args) {
+    setPeriodic(name, callback, tick, priority, ...args) {
         this.periodicTasks[name] = {
             callback : callback,
             tick : tick,
+            priority: priority,
             args : [].slice.call(arguments, 3) // removes the first three arguments of setPeriodic function
         };
     }
@@ -65,26 +73,34 @@ class HyperCanvas {
             type : listener
         }
 
+        
         for (const key of Object.keys(this.features)){
-            if (this.features[key].feature.validate(eventInfo) == true){
+            if (this.features[key].feature.creation){
+                console.log(this.features[key].feature.type)
+                this.features[key].feature.input(eventInfo)
+                break
+            }
+            if (this.features[key].feature.validate(eventInfo)){
                 this.features[key].feature.input(eventInfo)
             } 
         }
     }
 
     //add feature to setPeriodic and detectedInput loop
-    addFeature(feature, drawable = true) {
+    addFeature(feature, drawable = true, priority = 3) {
         //todo: determine if redundant keys are useful here (Callback functions, Ans: maybe if method name changes in 2.x)
+        //todo: setup id/name system
         this.features[feature.name] = {
             feature : feature,
             verifyCallback : feature.validate,
             inputCallback : feature.input,
-            drawCallback : feature.draw
+            drawCallback : feature.draw,
+            createdSignal : feature.created
         }
         
         if (drawable){
             var self = this
-            this.setPeriodic(feature.name + ".draw", function () { self.features[feature.name].feature.draw(self.context)}, 1)
+            this.setPeriodic(feature.name + ".draw", function () { self.features[feature.name].feature.draw(self.context)}, 1, priority)
         }
         
     }
@@ -97,7 +113,7 @@ class HyperCanvas {
             self.context.fillStyle = "rgb(255, 255, 255)"
             self.context.fillRect(0, 0, self.canvas.width, self.canvas.height)
             self.context.stroke()
-        }, 1)
+        }, 1, 1)
 
         this.size = [
             window.innerWidth,
@@ -107,7 +123,25 @@ class HyperCanvas {
         this.canvas.addEventListener("mousedown", function (event) {self.detectedInput(event, "mousedown")})
         this.canvas.addEventListener("mousemove", function (event) {self.detectedInput(event, "mousemove")})
         this.canvas.addEventListener("click", function (event) {self.detectedInput(event, "click")})
+        this.canvas.addEventListener("keydown", function (event) {
+            console.log(self.menuUsage)
+            if (event.code == "KeyE" && self.menuUsage == 0){
+                self.detectedInput(event, "KeyE")
 
+            }
+        })
+
+        this.setPeriodic("menu.used", function () {
+            self.menuUsage = 0
+            for (const value of Object.values(self.menu)){
+                self.menuUsage += value.state.using
+            }
+        }, 1)
+
+    }
+
+    getMenuText(feature){
+        this.menu[feature.type].getInfo(feature)
     }
 
     save() {

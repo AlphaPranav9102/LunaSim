@@ -2,17 +2,18 @@ class Stock {
     constructor(name, hyperCanvas){
         this.name = name
         this.type = "stock"
-        this.canvas = hyperCanvas
+        this.hyperCanvas = hyperCanvas
         this.state = {
             x : 0,
             y : 0,
-            a : 0,
-            b : 0,
+            a : 100,
+            b : 100,
             prevInteraction : {
                 x : 0,
                 y : 0,
             },
             creation : true,
+            created : true,
             selected : false,
             resize : false,
             resizeInteraction : {
@@ -24,22 +25,42 @@ class Stock {
                 left : null,
                 bottom : null,
                 right : null
+            },
+            metadata : {
+                name : "",
+                equation : "",
+                stockType : false
+            },
+            center : {
+                x: null,
+                y: null
             }
         }
     }
 
-    validate(event){
-        var validated = false
+    validate(event, hitbox=false){
+        this.state.center.x = this.state.x + this.state.a/2
+        this.state.center.y = this.state.y + this.state.b/2
 
-        if (event.type == "mousedown"){
+        var validated = false
+        
+        if (event.type == "KeyE"){
+           if (this.state.selected == true){
+               console.log(this.state.metadata)
+               this.hyperCanvas.getMenuText(this)
+           } 
+        }
+        else if (event.type == "mousedown"){
             if (this.state.creation){
                 validated = true;
             }
             else if ((this.boundingBox(this.state.x - 10, this.state.y - 10, 20, 20, [event.x, event.y]))&&
                 (this.state.selected)){
 
-                this.state.resize = true
-                this.state.resizeInteraction.corner = "top"
+                if (!hitbox){
+                    this.state.resize = true
+                    this.state.resizeInteraction.corner = "top"
+                }
                 validated = true
 
                 //console.log(1, this.state.x, event.x, this.state.y, event.y)
@@ -48,19 +69,26 @@ class Stock {
             else if ((this.boundingBox(this.state.x + this.state.a - 10, this.state.y + this.state.b - 10, 20, 20, [event.x, event.y])&& 
                 this.state.selected)){
 
-                this.state.resize = true
-                this.state.resizeInteraction.corner = "bottom"
+
+                if (!hitbox){
+                    this.state.resize = true
+                    this.state.resizeInteraction.corner = "bottom"
+                }
                 validated = true
 
                 //console.log(2)
             }
             else if ((this.boundingBox(this.state.x, this.state.y, this.state.a, this.state.b, [event.x, event.y]))){
-                if (this.state.selected){
-                    this.state.move = true
-                    this.cache(event)
-                    //console.log(this.state)
+                if (!hitbox){
+                    if (this.state.selected){
+                        this.state.move = true
+                        this.cache(event)
+                        //console.log(this.state)
+                    }
+                
+                    this.state.selected = true
                 }
-                this.state.selected = true
+                
                 validated = true
 
                 //console.log(4)
@@ -82,6 +110,10 @@ class Stock {
             }
             this.state.move = false
             validated = true
+            if (this.state.created){
+                this.state.created = false
+                this.hyperCanvas.getMenuText(this)
+            }
         }
         if (validated){
             return true
@@ -95,18 +127,23 @@ class Stock {
             this.state.creation = false
             this.state.resize = true
             this.state.resizeInteraction.corner = "bottom"
+            this.state.created = true
         }
         else if (this.state.resize){
             if (this.state.resizeInteraction.corner == "top"){
-                this.state.a += (this.state.x - event.x)
-                this.state.b += (this.state.y - event.y)
-                this.state.x = event.x
-                this.state.y = event.y
+                if (this.state.a + (this.state.x - event.x) > 100){
+                    this.state.a += (this.state.x - event.x)
+                    this.state.x = event.x
+                }
+                if (this.state.b + (this.state.y - event.y) > 100){
+                    this.state.b += (this.state.y - event.y)
+                    this.state.y = event.y
+                }
                 
             }
             else if (this.state.resizeInteraction.corner == "bottom"){
-                this.state.a = event.x - this.state.x
-                this.state.b = event.y - this.state.y
+                this.state.a = Math.max(event.x - this.state.x, 100)
+                this.state.b = Math.max(event.y - this.state.y, 100)
             }
             this.remap(event)
         }
@@ -135,6 +172,9 @@ class Stock {
         context.lineWidth = 5
         context.rect(this.state.x, this.state.y, this.state.a, this.state.b)
         context.fill()
+        context.font = '18px verdana';
+        context.fillStyle = "rgb(0, 0, 125)"
+        context.fillText(this.state.metadata.name, (this.state.x+this.state.a/2) - this.state.metadata.name.length*5, this.state.y+this.state.b+35);
         context.stroke()
 
         if (this.state.selected){

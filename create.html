@@ -57,7 +57,7 @@
             <button id="converterSelector" class="float-left pl-3 mr-3 mt-3 text-xl">
                 Co
             </button>
-            <button id="connectSelector" class="float-left pl-3 mr-3 mt-3 text-xl">
+            <button id="connectorSelector" class="float-left pl-3 mr-3 mt-3 text-xl">
                 N
             </button>
             <div>
@@ -70,8 +70,52 @@
                     Untitled Document
                 </button>
             </div>
+        </div><div id="modalStockOutside" class="w-screen h-screen grid w-full hidden fixed bg-modalDark">
+            <div class="z-10 w-120 p-10 h-120 mt-40 mx-auto justify-self-center bg-white rounded-2xl">
+                <div class="text-lg mt-5">
+                    <h1 class="text-4xl font-bold">New Stock</h1>
+                    <h1 class="text-3xl mt-8 font-semibold">Name <span id="stockError" class="text-red-600 text-lg float-right"></span></h1>
+                    <input type="text" id="stockName" name="stockName" class="bg-boxColor mt-3 w-full h-10 rounded-lg px-2 text-2xl">
+                    <h1 class="text-3xl mt-5 font-semibold">Value</h1>
+                    <input type="text" id="stockEquation" name="stockEquation" class="bg-boxColor mt-3 w-full h-10 rounded-lg px-2 text-2xl">
+                    <div>
+                        <input type="checkbox" id="stockType" name="stockType" class="mt-8 float-left">
+                            <h1 class="text-semibold pl-3 mt-6 float-left">Non-Negative</h1>
+                        </input>
+                    </div>
+                    <button id="stockSubmit" class="text-2xl font-bold float-right mt-16 mr-0 ml-2 p-2 px-5 rounded-lg bg-blue text-white border-black">Save</button>
+                </div>
+            </div> 
         </div>
-        <canvas id="modelCanvas" width='500' height='500'>
+        <div id="modalFlowOutside" class="w-screen h-screen grid w-full hidden fixed bg-modalDark">
+            <div class="z-20 w-120 p-10 h-120 mt-40 mx-auto justify-self-center bg-white rounded-2xl">
+                <div class="text-lg mt-5">
+                    <h1 class="text-4xl font-bold">New Flow</h1>
+                    <h1 class="text-3xl mt-8 font-semibold">Name<span id="flowError" class="text-red-600 text-lg float-right"></span></h1>
+                    <input type="text" id="flowName" name="flowName" class="bg-boxColor mt-3 w-full h-10 rounded-lg px-2 text-2xl">
+                    <h1 class="text-3xl mt-5 font-semibold">Equation</h1>
+                    <input type="text" id="flowEquation" name="flowEquation" class="bg-boxColor mt-3 w-full h-10 rounded-lg px-2 text-2xl">
+                    <input type="checkbox" id="flowType" name="flowType" class="mt-8 float-left">
+                        <h1 class="text-semibold pl-3 mt-6 float-left">Uniflow</h1>
+                    </input>
+                    <button id="flowSubmit" class="text-2xl font-bold float-right mt-16 mr-0 ml-2 p-2 px-5 rounded-lg bg-blue text-white border-black">Save</button>
+                </div>
+            </div>
+        </div>
+        <div id="modalConverterOutside" class="w-screen h-screen grid w-full hidden fixed bg-modalDark">
+            <div class="z-30 w-120 p-10 h-120 mt-40 mx-auto justify-self-center bg-white rounded-2xl">
+                <div class="text-lg mt-5">
+
+                    <h1 class="text-4xl font-bold">New Converter</h1>
+                    <h1 class="text-3xl mt-8 font-semibold">Name<span id="converterError" class="text-red-600 text-lg float-right"></span></h1>
+                    <input type="text" id="converterName" name="convName" class="bg-boxColor mt-3 w-full h-10 rounded-lg px-2 text-2xl">
+                    <h1 class="text-3xl mt-5 font-semibold">Equation</h1>
+                    <input type="text" id="converterEquation" name="convEquation" class="bg-boxColor mt-3 w-full h-10 rounded-lg px-2 text-2xl">
+                    <button id="converterSubmit" class="text-2xl font-bold float-right mt-16 mr-0 ml-2 p-2 px-5 rounded-lg bg-blue text-white border-black">Save</button>
+                </div>
+            </div>
+        </div>
+        <canvas id="modelCanvas" width='500' height='500' tabindex='1'>
         <script src="main.js" type="module"></script>
         -->
     </body>

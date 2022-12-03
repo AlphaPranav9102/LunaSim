@@ -28,7 +28,7 @@ class HyperCanvas {
         }
 
         for (const feature of Object.keys(this.features)){
-            if (this.features[feature].feature.type == "stock"){
+            if (this.features[feature].feature.type == "stock" && !this.features[feature].feature.state.deleted){
                 var stockData = {
                     name: this.features[feature].feature.state.metadata.name,
                     value: this.features[feature].feature.state.metadata.value,

@@ -87,5 +87,5 @@ var converterMenu = new ConverterMenu(
 hyperCanvas.menu["converter"] = converterMenu
 
 document.getElementById("runSelector").addEventListener("click", () => {
-    console.log(JSON.stringify(hyperCanvas.getData()))
+    console.log(hyperCanvas.getData())
 })

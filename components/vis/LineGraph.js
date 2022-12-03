@@ -42,7 +42,7 @@ class LineGraph {
                         enabled: false
                     },
                     animations: {
-                        enabled: false
+                        enabled: true
                     }
                 },
                 plotOptions: plotOptions,

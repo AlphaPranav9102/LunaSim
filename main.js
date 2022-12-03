@@ -6,6 +6,9 @@ import { Converter } from './components/converter.js'
 import { StockMenu } from './menus/stockMenu.js'
 import { FlowMenu } from './menus/flowMenu.js'
 import { ConverterMenu } from './menus/converterMenu.js'
+import { LineGraph } from './components/vis/LineGraph.js'
+import { Modal } from './components/vis/Modal.js';
+
 
 var canvas = document.getElementById("modelCanvas")
 console.log(canvas)
@@ -89,3 +92,16 @@ hyperCanvas.menu["converter"] = converterMenu
 document.getElementById("runSelector").addEventListener("click", () => {
     console.log(hyperCanvas.getData())
 })
+
+var modal = new Modal("editModal", "fakeToggle", "getEditedData", "editableFormContainer")
+var lines = new LineGraph(
+    "graphContainer",
+    "--TITLE--",
+    {},
+    {
+      formula: function(team) {return [[1,2,3,4,5,6,7,8,9,10], [1,2,3,4,5,6,7,8,9,10]]},
+      selectedOptions: [1],
+      allOptions: [1,2,3]
+    },
+    modal
+)

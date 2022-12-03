@@ -11,13 +11,56 @@ class HyperCanvas {
         this.menuUsage = 0
     }
 
-    // TODO: Get data about hyperCanvas and send to engine.js
-    get data() {
-        stocks = {}
-
-        for (const key of Object.keys(this.features)){
-             
+    // TODO: Get data from a page manager
+    getData() {
+        this.data = {
+            stocks: {},
+            converters: {},
+            integration_method: "rk4",
+            dt: 0.1,
+            end_time: 10,
+            state: {
+                stock: [],
+                flow: [],
+                converter: [],
+                connector: []
+            }
         }
+
+        for (const feature of Object.keys(this.features)){
+            if (this.features[feature].feature.type == "stock"){
+                var stockData = {
+                    name: this.features[feature].feature.state.metadata.name,
+                    value: this.features[feature].feature.state.metadata.value,
+                    inflows: {},
+                    outflows: {},
+                    isNN: this.features[feature].feature.state.metadata.stockType
+                }
+
+                try {
+                    stockData.inflows[this.features[feature].feature.state.flows.left.state.metadata.name] = 
+                        this.features[feature].feature.state.flows.left.state.metadata.equation
+                } catch {}
+
+                try {
+                    stockData.outflows[this.features[feature].feature.state.flows.right.state.metadata.name] = 
+                        this.features[feature].feature.state.flows.right.state.metadata.equation
+                } catch {}
+                
+                this.data.stocks[this.features[feature].feature.state.metadata.name] = stockData
+
+                this.data.state.stock.push(this.features[feature].feature.state)
+            }
+            else if (this.features[feature].feature.type == "converter"){
+                this.data.converters[this.features[feature].feature.state.metadata.name] = this.features[feature].feature.state.metadata.equation
+                this.data.state.converter.push(this.features[feature].feature.state)
+            }
+            else {
+                this.data.state[this.features[feature].feature.type].push(this.features[feature].feature.state)
+            }
+        }
+
+        return this.data
     }
 
     get size() {
@@ -125,8 +168,8 @@ class HyperCanvas {
         this.canvas.addEventListener("click", function (event) {self.detectedInput(event, "click")})
         this.canvas.addEventListener("keydown", function (event) {
             console.log(self.menuUsage)
-            if (event.code == "KeyE" && self.menuUsage == 0){
-                self.detectedInput(event, "KeyE")
+            if (["KeyE", "Backspace"].includes(event.code) && self.menuUsage == 0){
+                self.detectedInput(event, event.code)
 
             }
         })

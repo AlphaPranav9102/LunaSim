@@ -25,20 +25,29 @@ class Converter {
             center : {
                 x: null,
                 y: null
-            }
+            },
+            deleted: false
         }
     }
 
     validate(event, hitbox=false){
         var isValidated = false
 
-        if (event.type == "KeyE"){
+        if (this.state.deleted == true){
+            return false
+        }
+
+        else if (event.type == "KeyE"){
             if (this.state.selected == true){
-                console.log(this.state.metadata)
                 this.hyperCanvas.getMenuText(this)
             } 
         }
-        if (event.type == "mousedown"){
+        else if (event.type == "Backspace"){
+            if (this.state.selected == true){
+                this.state.deleted = true
+            }
+        }
+        else if (event.type == "mousedown"){
             if (this.state.creation){
                 isValidated = true
             }
@@ -119,6 +128,9 @@ class Converter {
     }
 
     draw(context){
+        if (this.state.deleted){
+            return -1
+        }
         if (this.state.creation == false){
             context.beginPath()
             context.strokeSt

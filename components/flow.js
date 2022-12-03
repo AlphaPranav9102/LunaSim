@@ -34,7 +34,8 @@ class Flow {
             center : {
                 x: null,
                 y: null
-            }
+            },
+            deleted: false
         }
     }
 
@@ -44,13 +45,23 @@ class Flow {
 
         var isValidated = false
 
-        if (event.type == "KeyE"){
+        if (this.state.deleted == true){
+            return false
+        }
+        else if (event.type == "KeyE"){
             if (this.state.selected == true){
-                console.log(this.state.metadata)
                 this.hyperCanvas.getMenuText(this)
             } 
         }
+        else if (event.type == "Backspace"){
+            if (this.state.selected == true){
+                this.state.deleted = true
+                try{this.state.stock.in.state.flows.left = null} catch{}
+                try{this.state.stock.out.state.flows.right = null} catch{}
+            }
+        }
         else if (event.type == "mousedown") {
+            console.log(this.state)
             if (this.state.creation == true){
                 isValidated = true
             }
@@ -170,6 +181,9 @@ class Flow {
         this.state.prevInteraction.y = event.y
     }
     draw(context) {
+        if (this.state.deleted){
+            return -1
+        }
         if (this.state.creation == false){
             var arrowWidth = 15
             var arrowY = null
@@ -275,7 +289,7 @@ class Flow {
                 this.state.y1 = feature.state.y + feature.state.b/2
             }
             else if (feature.state.flows.right == this){
-                feature.state.flows.left = null
+                feature.state.flows.right = null
             }
         }
     }

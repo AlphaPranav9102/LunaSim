@@ -18,13 +18,25 @@ class Connector {
             connection : {
                 in: null,
                 out: null
-            }
+            },
+            deleted: false
         }
     }
 
     validate(event){
         var validated = false
-        if (event.type == "mousedown"){
+
+        if (this.state.deleted){
+            return false
+        }
+
+        if (event.type == "Backspace"){
+            if (this.state.selected == true){
+                
+                this.state.deleted = true
+            }
+        }
+        else if (event.type == "mousedown"){
             if (this.state.creation == true){
                 var isClicked = this.onObject(event.x, event.y, ["stock", "flow", "converter"])
                 if (isClicked != null){
@@ -36,10 +48,10 @@ class Connector {
                 }
             }
             else if (this.onProjection(event.x, event.y)){
-                this.selected = true
+                this.state.selected = true
             }
             else {
-                this.selected = false
+                this.state.selected = false
             }
             
         }
@@ -86,13 +98,18 @@ class Connector {
     }
 
     draw(context){
+        this.isDeleted()
+        if (this.state.deleted){
+            return -1
+        }
+
         if (this.state.connection.in == null){
             return false
         }
         context.fillStyle = "rgb(255, 255, 255)"
         context.beginPath()
-        if (this.selected){
-            context.strokeStyle = "rgb(0, 0, 125)"
+        if (this.state.selected){
+            context.strokeStyle = "rgb(0, 125, 125)"
         }
         else {
             context.strokeStyle = "rgb(0, 0, 0)"
@@ -113,26 +130,6 @@ class Connector {
         for (var i = 0; i < type.length; i++){
             this.features = this.hyperCanvas.getType(type[i])
             for (const key of Object.keys(this.features)){
-                /*
-                if (type[i] == "stock"){
-                    if ((features[key].feature.state.x <= x && x <= features[key].feature.state.x + features[key].feature.state.a)
-                        && (features[key].feature.state.y <= y && y <= features[key].feature.state.y + features[key].feature.state.b)){
-                        return(features[key])
-                    }
-                }
-                if (type[i] == "flow"){
-                    if ((features[key].feature.state.x <= x && x <= features[key].feature.state.x + features[key].feature.state.a)
-                        && (features[key].feature.state.y <= y && y <= features[key].feature.state.y + features[key].feature.state.b)){
-                        return(features[key])
-                    }
-                }
-                if (type[i] == "converter"){
-                    if ((features[key].feature.state.x <= x && x <= features[key].feature.state.x + features[key].feature.state.a)
-                        && (features[key].feature.state.y <= y && y <= features[key].feature.state.y + features[key].feature.state.b)){
-                        return(features[key])
-                    }
-                }
-                */
 
                 if (this.features[key].feature.validate({type: "mousedown", x: x, y: y}, true)){
                     console.log("selected")
@@ -140,6 +137,15 @@ class Connector {
                 }
             }
         }
+    }
+
+    isDeleted(){
+        try {
+            if (this.state.connection.in.state.deleted || this.state.connection.out.state.deleted){
+                this.state.deleted = true
+            }
+        }
+        catch {}
     }
 
     onProjection(x, y){

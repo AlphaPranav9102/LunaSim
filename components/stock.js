@@ -6,8 +6,8 @@ class Stock {
         this.state = {
             x : 0,
             y : 0,
-            a : 100,
-            b : 100,
+            a : 50,
+            b : 30,
             prevInteraction : {
                 x : 0,
                 y : 0,
@@ -34,7 +34,8 @@ class Stock {
             center : {
                 x: null,
                 y: null
-            }
+            },
+            deleted: false
         }
     }
 
@@ -44,13 +45,23 @@ class Stock {
 
         var validated = false
         
-        if (event.type == "KeyE"){
-           if (this.state.selected == true){
-               console.log(this.state.metadata)
-               this.hyperCanvas.getMenuText(this)
-           } 
+        if (this.state.deleted == true){
+            return false
+        }
+        else if (event.type == "KeyE"){
+            if (this.state.selected == true){
+                this.hyperCanvas.getMenuText(this)
+            } 
+        }
+        else if (event.type == "Backspace"){
+            if (this.state.selected == true){
+                this.state.deleted = true
+                try{this.state.flows.left.state.stock.in = null} catch{}
+                try{this.state.flows.right.state.stock.out = null} catch{}
+            }
         }
         else if (event.type == "mousedown"){
+            console.log(this.state)
             if (this.state.creation){
                 validated = true;
             }
@@ -131,19 +142,19 @@ class Stock {
         }
         else if (this.state.resize){
             if (this.state.resizeInteraction.corner == "top"){
-                if (this.state.a + (this.state.x - event.x) > 100){
+                if (this.state.a + (this.state.x - event.x) > 50){
                     this.state.a += (this.state.x - event.x)
                     this.state.x = event.x
                 }
-                if (this.state.b + (this.state.y - event.y) > 100){
+                if (this.state.b + (this.state.y - event.y) > 30){
                     this.state.b += (this.state.y - event.y)
                     this.state.y = event.y
                 }
                 
             }
             else if (this.state.resizeInteraction.corner == "bottom"){
-                this.state.a = Math.max(event.x - this.state.x, 100)
-                this.state.b = Math.max(event.y - this.state.y, 100)
+                this.state.a = Math.max(event.x - this.state.x, 50)
+                this.state.b = Math.max(event.y - this.state.y, 30)
             }
             this.remap(event)
         }
@@ -163,8 +174,8 @@ class Stock {
     }
 
     draw(context){
-        if (this.state.creation){
-            return false
+        if (this.state.creation || this.state.deleted){
+            return -1
         }
         context.strokeStyle = "rgb(0, 0, 0)"
         context.fillStyle = "rgb(255, 255, 255)"

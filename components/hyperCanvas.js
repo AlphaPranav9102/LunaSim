@@ -5,10 +5,17 @@ class HyperCanvas {
         this.periodicTasks = {};
         this.features = {};
         this.globalTick = 0;
-        this.pageOffsetY = 50; // adds offset to canvas to account for header
+        this.pageOffsetY = 48; // adds offset to canvas to account for header
         this.frameRate = frameRate
         this.menu = {}
         this.menuUsage = 0
+        this.state = {
+            env_name: "untitled",
+            dt: "0.1",
+            end_time: "10",
+            integration_method: "euler",
+            start_time: "0"
+        }
     }
 
     // TODO: Get data from a page manager
@@ -16,9 +23,11 @@ class HyperCanvas {
         this.data = {
             stocks: {},
             converters: {},
-            integration_method: "rk4",
-            dt: 0.1,
-            end_time: 10,
+            integration_method: this.state.integration_method,
+            dt: this.state.dt,
+            end_time: this.state.end_time,
+            env_name: this.state.env_name,
+            start_time: this.state.start_time,
             state: {
                 stock: [],
                 flow: [],
@@ -31,20 +40,26 @@ class HyperCanvas {
             if (this.features[feature].feature.type == "stock" && !this.features[feature].feature.state.deleted){
                 var stockData = {
                     name: this.features[feature].feature.state.metadata.name,
-                    value: this.features[feature].feature.state.metadata.value,
+                    equation: this.features[feature].feature.state.metadata.equation,
                     inflows: {},
                     outflows: {},
-                    isNN: this.features[feature].feature.state.metadata.stockType
+                    isNN: this.features[feature].feature.state.metadata.stockType,
+                    values: []
                 }
 
                 try {
-                    stockData.inflows[this.features[feature].feature.state.flows.left.state.metadata.name] = 
-                        this.features[feature].feature.state.flows.left.state.metadata.equation
+                    stockData.inflows[this.features[feature].feature.state.flows.left.state.metadata.name] = {
+                        values: [],
+                        equation: this.features[feature].feature.state.flows.left.state.metadata.equation
+                    }
+                        
                 } catch {}
 
                 try {
-                    stockData.outflows[this.features[feature].feature.state.flows.right.state.metadata.name] = 
-                        this.features[feature].feature.state.flows.right.state.metadata.equation
+                    stockData.outflows[this.features[feature].feature.state.flows.right.state.metadata.name] = {
+                        values: [],
+                        equation: this.features[feature].feature.state.flows.right.state.metadata.equation
+                    }
                 } catch {}
                 
                 this.data.stocks[this.features[feature].feature.state.metadata.name] = stockData
@@ -52,7 +67,10 @@ class HyperCanvas {
                 this.data.state.stock.push(this.features[feature].feature.state)
             }
             else if (this.features[feature].feature.type == "converter"){
-                this.data.converters[this.features[feature].feature.state.metadata.name] = this.features[feature].feature.state.metadata.equation
+                this.data.converters[this.features[feature].feature.state.metadata.name] = {
+                    values: [],
+                    equation: this.features[feature].feature.state.metadata.equation
+                }
                 this.data.state.converter.push(this.features[feature].feature.state)
             }
             else {
@@ -163,14 +181,12 @@ class HyperCanvas {
         var self = this;
         setInterval(function () { self.runPeriodic() }, 1000/this.frameRate)
         this.setPeriodic("canvas.clear", function () {
-            self.context.fillStyle = "rgb(255, 255, 255)"
-            self.context.fillRect(0, 0, self.canvas.width, self.canvas.height)
-            self.context.stroke()
+            self.canvas.width += 0
         }, 1, 1)
 
         this.size = [
             window.innerWidth,
-            window.innerHeight
+            window.innerHeight-this.pageOffsetY
         ]
 
         this.canvas.addEventListener("mousedown", function (event) {self.detectedInput(event, "mousedown")})

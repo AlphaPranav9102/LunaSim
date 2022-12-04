@@ -137,7 +137,9 @@ export class Simulation {
     Runs model using Euler's method.
     */
     euler() {
+        console.log(this.startTime, this.endTime, this.dt)
         for (var t = this.startTime + this.dt; parseFloat(t.toFixed(5)) <= parseFloat(this.endTime.toFixed(5)); t += this.dt) { // (skip start time as that was covered in this.initObjects())
+            console.log(t)
             // Calculate new values for all stocks
             for (var stockName in this.data.stocks) {
                 let stock = this.data.stocks[stockName];
@@ -274,6 +276,7 @@ export class Simulation {
         this.reset();
         if (this.data["integration_method"] == "euler") {
             this.euler();
+            console.log(this.data)
         } else if (this.data["integration_method"] == "rk4") {
             this.rk4();
         }

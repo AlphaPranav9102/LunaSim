@@ -49,6 +49,33 @@
             <button id="connectorSelector" class="pl-3 mr-3 mt-3 text-xl">
                 N
             </button>
+            <div>
+                <button id="runSelector" class="mt-2 rounded-lg w-20 h-10 float-left ml-4 mr-5 bg-runBox text-white font-semibold text-xl">
+                    Run
+                </button>
+            </div>
+            <div>
+                <button id="setupSelector" class="bg-slate-200 float-right w-48 h-10 mr-3 mt-2 text-xl rounded-lg">
+                    Untitled Document
+                </button>
+            </div>
+        </div><div id="modalStockOutside" class="w-screen h-screen grid w-full hidden fixed bg-modalDark">
+            <div class="z-10 w-120 p-10 h-120 mt-40 mx-auto justify-self-center bg-white rounded-2xl">
+                <div class="text-lg mt-5">
+                    <h1 class="text-4xl font-bold">New Stock</h1>
+                    <h1 class="text-3xl mt-8 font-semibold">Name <span id="stockError" class="text-red-600 text-lg float-right"></span></h1>
+                    <input type="text" id="stockName" name="stockName" class="border-[1.5px] border-gray-300 mt-3 w-full h-10 rounded-lg px-2 text-2xl">
+                    <h1 class="text-3xl mt-5 font-semibold">Value</h1>
+                    <input type="text" id="stockEquation" name="stockEquation" class="border-[1.5px]  border-gray-300 mt-3 w-full h-10 rounded-lg px-2 text-2xl">
+                    <div>
+                        <input type="checkbox" id="stockType" name="stockType" class="mt-8 float-left">
+                            <h1 class="text-semibold pl-3 mt-6 float-left">Non-Negative</h1>
+                        </input>
+                    </div>
+                    <button id="stockSubmit" class="text-2xl font-bold float-right mt-16 mr-0 ml-2 p-2 px-5 rounded-lg bg-blue text-white border-black">Save</button>
+                    <h1 class="text-xl mt-5 font-semibold text-red" id="stockError"></h1>
+                </div>
+            </div>
         </div>
         <div class="inline">
             <button id="runSelector"
@@ -72,6 +99,8 @@
                     <input type="checkbox" id="stockType" name="stockType" class="mt-8 float-left">
                     <h1 class="text-semibold pl-3 mt-6 float-left">Non-Negative</h1>
                     </input>
+                    <button id="flowSubmit" class="text-2xl font-bold float-right mt-16 mr-0 ml-2 p-2 px-5 rounded-lg bg-blue text-white border-black">Save</button>
+                    <h1 class="text-xl mt-5 font-semibold text-red" id="flowError"></h1>
                 </div>
                 <button id="stockSubmit"
                     class="text-2xl font-bold float-right mt-16 mr-0 ml-2 p-2 px-5 rounded-lg bg-[#2563EB] text-white border-black">Save</button>
@@ -100,7 +129,6 @@
     <div id="modalConverterOutside" class="w-screen h-screen grid w-full hidden fixed bg-[#00000030] ">
         <div class="z-30 w-120 p-10 h-120 mt-40 mx-auto justify-self-center bg-white rounded-2xl">
             <div class="text-lg mt-5">
-
                 <h1 class="text-4xl font-bold">New Converter</h1>
                 <h1 class="text-3xl mt-8 font-semibold">Name<span id="converterError"
                         class="text-red-600 text-lg float-right"></span></h1>

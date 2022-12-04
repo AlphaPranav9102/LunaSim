@@ -75,6 +75,30 @@ export class Simulation {
         }
     }
 
+    /*
+    Resets the model to the initial state.  Deletes all values for all objects and sets safevals to null.
+    */
+    reset() {
+        for (var stockName in this.data.stocks) {
+            let stock = this.data.stocks[stockName];
+
+            stock["safeval"] = null;
+            stock["values"] = [];
+
+            // initialize flows
+            for (var flowName in stock["inflows"]) {
+                this.data.stocks[stockName]["inflows"][flowName]["values"] = [];
+            }
+            for (var flowName in stock["outflows"]) {
+                this.data.stocks[stockName]["outflows"][flowName]["values"] = [];
+            }
+        }
+
+        for (var converterName in this.data.converters) {
+            this.data.converters[converterName]["values"] = [];
+        }
+    }
+
     /* 
     Uses stock name to return sum of inflows and outflows.
     */
@@ -249,6 +273,7 @@ export class Simulation {
     This is the function called by frontend.
     */
     run() {
+        this.reset();
         if (this.data["integration_method"] == "euler") {
             this.euler();
             console.log(this.data)

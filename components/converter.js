@@ -1,3 +1,5 @@
+import { Component } from "./component.js"
+
 class Converter {
     constructor(name, hyperCanvas){
         this.name = name
@@ -45,6 +47,9 @@ class Converter {
         else if (event.type == "Backspace"){
             if (this.state.selected == true){
                 this.state.deleted = true
+                Component.name = Component.name.filter(name => {
+                    return name != this.state.metadata.name;
+                  });
             }
         }
         else if (event.type == "mousedown"){

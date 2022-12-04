@@ -8,11 +8,12 @@ import { FlowMenu } from './menus/flowMenu.js'
 import { ConverterMenu } from './menus/converterMenu.js'
 import { LineGraph } from './components/vis/LineGraph.js'
 import { Modal } from './components/vis/Modal.js';
+import { Simulation } from './engine.js'
 
 
 var canvas = document.getElementById("modelCanvas")
 console.log(canvas)
-var hyperCanvas = new HyperCanvas(canvas, 10000)
+var hyperCanvas = new HyperCanvas(canvas, 100)
 hyperCanvas.initialize()
 
 var features = {
@@ -91,14 +92,22 @@ hyperCanvas.menu["converter"] = converterMenu
 
 document.getElementById("runSelector").addEventListener("click", () => {
     console.log(hyperCanvas.getData())
+    var sim = new Simulation(hyperCanvas.getData())
+    console.log(sim.run())
 })
-
 
 var modal = new Modal("modalGraphOutside", "typeSubmit","editableFormContainer")
 
+document.getElementById("drawerGraph").onclick = function (e) {
+    console.log(e.target)
+    if (e.target == this){
+        document.getElementById("drawerGraph").classList.toggle("hidden")
+    }
+}
+
 var lines = new LineGraph(
     "graphContainer",
-    "--TITLE--",
+    "",
     {},
     {
       formula: function(team) {return [[1,2,3,4,5,6,7,8,9,10], [1,2,3,4,5,6,7,8,9,10]]},
@@ -107,3 +116,34 @@ var lines = new LineGraph(
     },
     modal
 )
+
+var getEnv = false
+
+var processEnv = function () {
+    if (getEnv){
+        document.getElementById("envName").value = hyperCanvas.state.file_name
+        document.getElementById("envDT").value = hyperCanvas.state.dt
+        document.getElementById("envTime").value = hyperCanvas.state.end_time
+        if (hyperCanvas.state.integration_method == "euler"){
+            document.getElementById("envType1").checked = true
+        }
+        if (hyperCanvas.state.integration_method == "rk4"){
+            document.getElementById("envType2").checked = true
+        }
+    }
+    else {
+        hyperCanvas.state.file_name = document.getElementById("envName").value
+        hyperCanvas.state.dt = document.getElementById("envDT").value
+        hyperCanvas.state.end_time = document.getElementById("envTime").value
+        if (document.getElementById("envType1").checked){
+            hyperCanvas.state.integration_method = "euler"
+        }
+        if (document.getElementById("envType2").checked){
+            hyperCanvas.state.integration_method = "rk4"
+        }
+    }
+    document.getElementById("modalEnvOutside").classList.toggle("hidden")
+}
+
+document.getElementById("envSubmit").onclick = processEnv
+document.getElementById("setupSelector").onclick = processEnv

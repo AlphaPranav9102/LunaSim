@@ -1,4 +1,4 @@
-class Simulation {
+export class Simulation {
     constructor(structData) {
         this.data = structData;
 
@@ -55,6 +55,7 @@ class Simulation {
             let value = eval(this.parseObject(stock["equation"]));
             
             stock["safeval"] = value;
+            stock["values"] = []
             stock["values"].push(value);
         }
 

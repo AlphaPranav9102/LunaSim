@@ -5,10 +5,16 @@ class HyperCanvas {
         this.periodicTasks = {};
         this.features = {};
         this.globalTick = 0;
-        this.pageOffsetY = 50; // adds offset to canvas to account for header
+        this.pageOffsetY = 48; // adds offset to canvas to account for header
         this.frameRate = frameRate
         this.menu = {}
         this.menuUsage = 0
+        this.state = {
+            env_name: "untitled",
+            dt: "0.1",
+            end_time: "10",
+            integration_method: "euler" 
+        }
     }
 
     // TODO: Get data from a page manager
@@ -16,9 +22,10 @@ class HyperCanvas {
         this.data = {
             stocks: {},
             converters: {},
-            integration_method: "rk4",
-            dt: 0.1,
-            end_time: 10,
+            integration_method: this.state.integration_method,
+            dt: this.state.dt,
+            end_time: this.state.end_time,
+            env_name: this.state.env_name,
             state: {
                 stock: [],
                 flow: [],
@@ -31,7 +38,7 @@ class HyperCanvas {
             if (this.features[feature].feature.type == "stock" && !this.features[feature].feature.state.deleted){
                 var stockData = {
                     name: this.features[feature].feature.state.metadata.name,
-                    value: this.features[feature].feature.state.metadata.value,
+                    equation: this.features[feature].feature.state.metadata.equation,
                     inflows: {},
                     outflows: {},
                     isNN: this.features[feature].feature.state.metadata.stockType
@@ -153,12 +160,12 @@ class HyperCanvas {
         var self = this;
         setInterval(function () { self.runPeriodic() }, 1000/this.frameRate)
         this.setPeriodic("canvas.clear", function () {
-            //self.canvas.width += 0
+            self.canvas.width += 0
         }, 1, 1)
 
         this.size = [
             window.innerWidth,
-            window.innerHeight
+            window.innerHeight-this.pageOffsetY
         ]
 
         this.canvas.addEventListener("mousedown", function (event) {self.detectedInput(event, "mousedown")})

@@ -1,3 +1,5 @@
+import { Component } from "./component.js"
+
 class HyperCanvas {
     constructor(canvas, frameRate) {
         this.canvas = canvas;
@@ -28,6 +30,7 @@ class HyperCanvas {
             end_time: this.state.end_time,
             env_name: this.state.env_name,
             start_time: this.state.start_time,
+            names: Component.name,
             state: {
                 stock: [],
                 flow: [],

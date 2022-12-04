@@ -9,6 +9,7 @@ import { ConverterMenu } from './menus/converterMenu.js'
 import { LineGraph } from './components/vis/LineGraph.js'
 import { Modal } from './components/vis/Modal.js';
 import { Simulation } from './engine.js'
+import { Component } from './components/component.js'
 
 
 var canvas = document.getElementById("modelCanvas")
@@ -151,8 +152,9 @@ document.getElementById("setupSelector").onclick = processEnv
 
 
 document.getElementById("fileDownload").onclick = function () {
-    console.log(hyperCanvas.getData())
-    var dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(hyperCanvas.getData()));
+    var sim = new Simulation(hyperCanvas.getData())
+    sim.run()
+    var dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(sim.data));
     var dlAnchorElem = document.getElementById('downloadAnchorElem');
     dlAnchorElem.setAttribute("href",     dataStr     );
     dlAnchorElem.setAttribute("download", `${hyperCanvas.state.env_name}.luna`);
@@ -206,4 +208,6 @@ function onReaderLoad(event) {
     if (data.integration_method == "rk4"){
         document.getElementById("envType2").checked = true
     }
+
+    Component.name = data.name
 }

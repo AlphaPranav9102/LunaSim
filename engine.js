@@ -55,7 +55,6 @@ export class Simulation {
             let value = eval(this.parseObject(stock["equation"]));
             
             stock["safeval"] = value;
-            stock["values"] = []
             stock["values"].push(value);
         }
 

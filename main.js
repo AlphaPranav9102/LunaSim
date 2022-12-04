@@ -122,7 +122,7 @@ var getEnv = false
 
 var processEnv = function () {
     if (getEnv){
-        document.getElementById("envName").value = hyperCanvas.state.file_name
+        document.getElementById("envName").value = hyperCanvas.state.env_name
         document.getElementById("envDT").value = hyperCanvas.state.dt
         document.getElementById("envTime").value = hyperCanvas.state.end_time
         if (hyperCanvas.state.integration_method == "euler"){
@@ -133,7 +133,7 @@ var processEnv = function () {
         }
     }
     else {
-        hyperCanvas.state.file_name = document.getElementById("envName").value
+        hyperCanvas.state.env_name = document.getElementById("envName").value
         hyperCanvas.state.dt = document.getElementById("envDT").value
         hyperCanvas.state.end_time = document.getElementById("envTime").value
         if (document.getElementById("envType1").checked){
@@ -148,3 +148,62 @@ var processEnv = function () {
 
 document.getElementById("envSubmit").onclick = processEnv
 document.getElementById("setupSelector").onclick = processEnv
+
+
+document.getElementById("fileDownload").onclick = function () {
+    console.log(hyperCanvas.getData())
+    var dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(hyperCanvas.getData()));
+    var dlAnchorElem = document.getElementById('downloadAnchorElem');
+    dlAnchorElem.setAttribute("href",     dataStr     );
+    dlAnchorElem.setAttribute("download", `${hyperCanvas.state.env_name}.luna`);
+    dlAnchorElem.click();
+}
+
+document.getElementById("fileUpload").onclick = function (){
+    uploadMech.click()
+}
+
+uploadMech.addEventListener("change", uploadProcess)
+
+function uploadProcess(event){
+    var reader = new FileReader();
+    reader.onload = onReaderLoad;
+    reader.readAsText(event.target.files[0]);
+}
+
+function onReaderLoad(event) {
+    var data = JSON.parse(event.target.result);
+    console.log(data);
+
+    console.log("Uploaded")
+    for (const stock of data.state.stock){
+        let feature = new Stock(Date.now(), hyperCanvas)
+        feature.state = stock
+        hyperCanvas.addFeature(feature, true)
+    }
+    for (const flow of data.state.flow){
+        let feature = new Flow(Date.now(), hyperCanvas)
+        feature.state = flow
+        hyperCanvas.addFeature(feature, true)
+    }
+    for (const converter of data.state.converter){
+        let feature = new Converter(Date.now(), hyperCanvas)
+        feature.state = converter
+        hyperCanvas.addFeature(feature, true)
+    }
+    for (const connector of data.state.connector){
+        let feature = new Connector(Date.now(), hyperCanvas)
+        feature.state = connector
+        hyperCanvas.addFeature(feature, true)
+    }
+
+    document.getElementById("envName").value = data.env_name
+    document.getElementById("envDT").value = data.dt
+    document.getElementById("envTime").value = data.end_time
+    if (data.integration_method == "euler"){
+        document.getElementById("envType1").checked = true
+    }
+    if (data.integration_method == "rk4"){
+        document.getElementById("envType2").checked = true
+    }
+}

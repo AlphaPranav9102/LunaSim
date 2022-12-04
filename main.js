@@ -93,7 +93,9 @@ document.getElementById("runSelector").addEventListener("click", () => {
     console.log(hyperCanvas.getData())
 })
 
-var modal = new Modal("editModal", "fakeToggle", "getEditedData", "editableFormContainer")
+
+var modal = new Modal("modalGraphOutside", "typeSubmit","editableFormContainer")
+
 var lines = new LineGraph(
     "graphContainer",
     "--TITLE--",

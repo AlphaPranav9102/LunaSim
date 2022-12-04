@@ -153,9 +153,7 @@ class HyperCanvas {
         var self = this;
         setInterval(function () { self.runPeriodic() }, 1000/this.frameRate)
         this.setPeriodic("canvas.clear", function () {
-            self.context.fillStyle = "rgb(255, 255, 255)"
-            self.context.fillRect(0, 0, self.canvas.width, self.canvas.height)
-            self.context.stroke()
+            //self.canvas.width += 0
         }, 1, 1)
 
         this.size = [

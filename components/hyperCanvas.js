@@ -13,7 +13,8 @@ class HyperCanvas {
             env_name: "untitled",
             dt: "0.1",
             end_time: "10",
-            integration_method: "euler" 
+            integration_method: "euler",
+            start_time: "0"
         }
     }
 
@@ -26,6 +27,7 @@ class HyperCanvas {
             dt: this.state.dt,
             end_time: this.state.end_time,
             env_name: this.state.env_name,
+            start_time: this.state.start_time,
             state: {
                 stock: [],
                 flow: [],
@@ -41,17 +43,23 @@ class HyperCanvas {
                     equation: this.features[feature].feature.state.metadata.equation,
                     inflows: {},
                     outflows: {},
-                    isNN: this.features[feature].feature.state.metadata.stockType
+                    isNN: this.features[feature].feature.state.metadata.stockType,
+                    values: []
                 }
 
                 try {
-                    stockData.inflows[this.features[feature].feature.state.flows.left.state.metadata.name] = 
-                        this.features[feature].feature.state.flows.left.state.metadata.equation
+                    stockData.inflows[this.features[feature].feature.state.flows.left.state.metadata.name] = {
+                        values: [],
+                        equation: this.features[feature].feature.state.flows.left.state.metadata.equation
+                    }
+                        
                 } catch {}
 
                 try {
-                    stockData.outflows[this.features[feature].feature.state.flows.right.state.metadata.name] = 
-                        this.features[feature].feature.state.flows.right.state.metadata.equation
+                    stockData.outflows[this.features[feature].feature.state.flows.right.state.metadata.name] = {
+                        values: [],
+                        equation: this.features[feature].feature.state.flows.right.state.metadata.equation
+                    }
                 } catch {}
                 
                 this.data.stocks[this.features[feature].feature.state.metadata.name] = stockData
@@ -59,7 +67,10 @@ class HyperCanvas {
                 this.data.state.stock.push(this.features[feature].feature.state)
             }
             else if (this.features[feature].feature.type == "converter"){
-                this.data.converters[this.features[feature].feature.state.metadata.name] = this.features[feature].feature.state.metadata.equation
+                this.data.converters[this.features[feature].feature.state.metadata.name] = {
+                    values: [],
+                    equation: this.features[feature].feature.state.metadata.equation
+                }
                 this.data.state.converter.push(this.features[feature].feature.state)
             }
             else {

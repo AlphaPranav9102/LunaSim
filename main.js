@@ -93,7 +93,8 @@ hyperCanvas.menu["converter"] = converterMenu
 document.getElementById("runSelector").addEventListener("click", () => {
     console.log(hyperCanvas.getData())
     var sim = new Simulation(hyperCanvas.getData())
-    console.log(sim.run())
+    sim.run()
+    console.log(sim.data)
 })
 
 var modal = new Modal("modalGraphOutside", "typeSubmit","editableFormContainer")

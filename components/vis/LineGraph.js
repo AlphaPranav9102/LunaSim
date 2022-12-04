@@ -8,7 +8,7 @@ class LineGraph {
 
         this.companionDiv = document.createElement("div")
         this.companionDiv.classList.add("p-4", "border-2", "border-gray-200", "rounded-lg")
-        this.companionDiv.style.width = "400px"
+        this.companionDiv.style.width = "325px"
         this.companionDiv.id = this.uuid
 
         document.getElementById(parent_id).appendChild(this.companionDiv)

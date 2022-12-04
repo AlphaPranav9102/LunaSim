@@ -89,7 +89,7 @@ class Flow {
                 }
                 isValidated = true
             }
-            else if (this.boundingBox((this.state.x1 + this.state.x2 - 15)/2-10, this.state.y1-10, 20, this.state.y2 + 10, [event.x, event.y])){
+            else if (this.boundingBox((this.state.x1 + this.state.x2 - 15)/2-10, Math.min(this.state.y1, this.state.y2)-10, 20, Math.max(this.state.y1, this.state.y2) + 10, [event.x, event.y])){
                 if (!hitbox){
                     if (this.state.selected){
                         this.state.move = true

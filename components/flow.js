@@ -1,4 +1,4 @@
-
+import { Component } from "./component.js"
 
 class Flow {
     constructor(name, hyperCanvas){
@@ -56,8 +56,11 @@ class Flow {
         else if (event.type == "Backspace"){
             if (this.state.selected == true){
                 this.state.deleted = true
-                try{this.state.stock.in.state.flows.left = null} catch{}
-                try{this.state.stock.out.state.flows.right = null} catch{}
+                Component.name = Component.name.filter(name => {
+                    return name != this.state.metadata.name;
+                  });
+                try{this.hyperCanvas.getFeature(this.state.stock.in).state.flows.left = null} catch{}
+                try{this.hyperCanvas.getFeature(this.state.stock.out).state.flows.right = null} catch{}
             }
         }
         else if (event.type == "mousedown") {
@@ -273,8 +276,9 @@ class Flow {
         for (const features of Object.keys(metadata)){
             var feature = metadata[features].feature
             if (this.boundingBox(feature.state.x, feature.state.y, feature.state.a/2, feature.state.b, [this.state.x2, this.state.y2])){
-                this.state.stock.in = feature
-                feature.state.flows.left = this
+                console.log(feature.state.metadata.name)
+                this.state.stock.in = feature.state.metadata.name
+                feature.state.flows.left = this.state.metadata.name
                 console.log(feature.state.flows.left)
                 this.state.x2 = feature.state.x
                 this.state.y2 = feature.state.y + feature.state.b/2
@@ -283,8 +287,8 @@ class Flow {
                 feature.state.flows.left = null
             }
             if (this.boundingBox(feature.state.x + feature.state.a/2, feature.state.y, feature.state.a/2, feature.state.b, [this.state.x1, this.state.y1])){
-                this.state.stock.out = feature
-                feature.state.flows.right = this
+                this.state.stock.out = feature.state.metadata.name
+                feature.state.flows.right = this.state.metadata.name
                 this.state.x1 = feature.state.x + feature.state.a
                 this.state.y1 = feature.state.y + feature.state.b/2
             }

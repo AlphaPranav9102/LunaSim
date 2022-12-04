@@ -1,4 +1,6 @@
-class Stock {
+import { Component } from "./component.js"
+
+class Stock{
     constructor(name, hyperCanvas){
         this.name = name
         this.type = "stock"
@@ -56,12 +58,14 @@ class Stock {
         else if (event.type == "Backspace"){
             if (this.state.selected == true){
                 this.state.deleted = true
-                try{this.state.flows.left.state.stock.in = null} catch{}
-                try{this.state.flows.right.state.stock.out = null} catch{}
+                Component.name = Component.name.filter(name => {
+                    return name != this.state.metadata.name;
+                  });
+                try{this.hyperCanvas.getFeature(this.state.flows.left).state.stock.in = null} catch{}
+                try{this.hyperCanvas.getFeature(this.state.flows.right).state.stock.out = null} catch{}
             }
         }
         else if (event.type == "mousedown"){
-            console.log(this.state)
             if (this.state.creation){
                 validated = true;
             }
@@ -196,6 +200,8 @@ class Stock {
             context.fillRect(this.state.x+this.state.a-10, this.state.y+this.state.b-10, 20, 20)
             context.stroke()
         }
+        context.fillStyle = "rgb(0, 0, 0)"
+        context.strokeStyle = "rgb(0, 0, 0)"
     }
 
     boundingBox(x, y, a, b, point){
@@ -208,12 +214,12 @@ class Stock {
 
     remap(event){
         if (this.state.flows.left != null){
-            this.state.flows.left.state.x2 = this.state.x
-            this.state.flows.left.state.y2 = this.state.y + this.state.b/2
+            this.hyperCanvas.getFeature(this.state.flows.left).state.x2 = this.state.x
+            this.hyperCanvas.getFeature(this.state.flows.left).state.y2 = this.state.y + this.state.b/2
         }
         if (this.state.flows.right != null){
-            this.state.flows.right.state.x1 = this.state.x + this.state.a
-            this.state.flows.right.state.y1 = this.state.y + this.state.b/2
+            this.hyperCanvas.getFeature(this.state.flows.right).state.x1 = this.state.x + this.state.a
+            this.hyperCanvas.getFeature(this.state.flows.right).state.y1 = this.state.y + this.state.b/2
         }
 
     }

@@ -77,12 +77,22 @@ class HyperCanvas {
         var metadata = {}
         var features = Object.keys(this.features);
         for (const feature of features){
-            console.log(feature)
-            if (this.features[feature].feature.type == type){
+            if (this.features[feature].feature.type == type && this.features[feature].feature.state.deleted == false){
                 metadata[feature] = this.features[feature]
             }
         }
         return(metadata)
+    }
+
+    getFeature(name){
+        var features = Object.keys(this.features);
+        for (const feature of features){
+            try {
+                if (this.features[feature].feature.state.metadata.name == name){
+                    return this.features[feature].feature
+                }
+            } catch (e) {console.log(e)}
+        }
     }
 
     // periodic functions for the calling of added functions to periodic runner

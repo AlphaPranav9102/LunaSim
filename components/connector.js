@@ -19,6 +19,9 @@ class Connector {
                 in: null,
                 out: null
             },
+            metadata: {
+                name: Date.now()
+            },
             deleted: false
         }
     }
@@ -41,7 +44,7 @@ class Connector {
                 var isClicked = this.onObject(event.x, event.y, ["stock", "flow", "converter"])
                 if (isClicked != null){
                     console.log(isClicked)
-                    this.state.connection.in = isClicked
+                    this.state.connection.in = isClicked.state.metadata.name
                     console.log(this.state.connection.in)
                     this.state.creating = true
                     validated = true
@@ -65,7 +68,7 @@ class Connector {
                 var isClicked = this.onObject(event.x, event.y, ["flow", "converter"])
                 console.log(isClicked)
                 if (isClicked != null){
-                    this.state.connection.out = isClicked
+                    this.state.connection.out = isClicked.state.metadata.name
                     this.state.creating = false
                     this.state.creation = false
                 }
@@ -114,12 +117,11 @@ class Connector {
         else {
             context.strokeStyle = "rgb(0, 0, 0)"
         }
-        context.moveTo(this.state.connection.in.state.center.x, this.state.connection.in.state.center.y)
+        context.moveTo(this.hyperCanvas.getFeature(this.state.connection.in).state.center.x, this.hyperCanvas.getFeature(this.state.connection.in).state.center.y)
         try {
-            context.lineTo(this.state.connection.out.state.center.x, this.state.connection.out.state.center.y)
+            context.lineTo(this.hyperCanvas.getFeature(this.state.connection.out).state.center.x, this.hyperCanvas.getFeature(this.state.connection.out).state.center.y)
         }
         catch (e) {
-            console.log(this.state.connection.out.center, this.state.connection.out.x)
             context.lineTo(this.state.connection.out.x, this.state.connection.out.y)
         }
         context.stroke()
@@ -132,7 +134,6 @@ class Connector {
             for (const key of Object.keys(this.features)){
 
                 if (this.features[key].feature.validate({type: "mousedown", x: x, y: y}, true)){
-                    console.log("selected")
                     return(this.features[key].feature)
                 }
             }
@@ -141,7 +142,7 @@ class Connector {
 
     isDeleted(){
         try {
-            if (this.state.connection.in.state.deleted || this.state.connection.out.state.deleted){
+            if (this.hyperCanvas.getFeature(this.state.connection.in).state.deleted || this.hyperCanvas.getFeature(this.state.connection.out).state.deleted){
                 this.state.deleted = true
             }
         }
@@ -149,22 +150,22 @@ class Connector {
     }
 
     onProjection(x, y){
-        if (this.state.connection.in.state.center.x <= this.state.connection.out.state.center.x){
-            var yRise = (this.state.connection.out.state.center.y-this.state.connection.in.state.center.y)
-            var xRun = (this.state.connection.out.state.center.x-this.state.connection.in.state.center.x)
-            var xBase = this.state.connection.in.state.center.x
-            var yBase = this.state.connection.in.state.center.y
+        if (this.hyperCanvas.getFeature(this.state.connection.in).state.center.x <= this.hyperCanvas.getFeature(this.state.connection.out).state.center.x){
+            var yRise = (this.hyperCanvas.getFeature(this.state.connection.out).state.center.y-this.hyperCanvas.getFeature(this.state.connection.in).state.center.y)
+            var xRun = (this.hyperCanvas.getFeature(this.state.connection.out).state.center.x-this.hyperCanvas.getFeature(this.state.connection.in).state.center.x)
+            var xBase = this.hyperCanvas.getFeature(this.state.connection.in).state.center.x
+            var yBase = this.hyperCanvas.getFeature(this.state.connection.in).state.center.y
         }
         else {
-            var yRise = (this.state.connection.in.state.center.y-this.state.connection.out.state.center.y)
-            var xRun = (this.state.connection.in.state.center.x-this.state.connection.out.state.center.x)
-            var xBase = this.state.connection.out.state.center.x
-            var yBase = this.state.connection.out.state.center.y
+            var yRise = (this.hyperCanvas.getFeature(this.state.connection.in).state.center.y-this.hyperCanvas.getFeature(this.state.connection.out).state.center.y)
+            var xRun = (this.hyperCanvas.getFeature(this.state.connection.in).state.center.x-this.hyperCanvas.getFeature(this.state.connection.out).state.center.x)
+            var xBase = this.hyperCanvas.getFeature(this.state.connection.out).state.center.x
+            var yBase = this.hyperCanvas.getFeature(this.state.connection.out).state.center.y
         }
         var slope = yRise/xRun
         
-        if (Math.min(this.state.connection.in.state.center.x, this.state.connection.out.state.center.x) <= x && x <= Math.max(this.state.connection.in.state.center.x, this.state.connection.out.state.center.x)){
-            //console.log(x - Math.min(this.state.connection.in.state.center.x, this.state.connection.out.state.center.x), slope)
+        if (Math.min(this.hyperCanvas.getFeature(this.state.connection.in).state.center.x, this.hyperCanvas.getFeature(this.state.connection.out).state.center.x) <= x && x <= Math.max(this.hyperCanvas.getFeature(this.state.connection.in).state.center.x, this.hyperCanvas.getFeature(this.state.connection.out).state.center.x)){
+            //console.log(x - Math.min(this.hyperCanvas.getFeature(this.state.connection.in).state.center.x, this.hyperCanvas.getFeature(this.state.connection.out).state.center.x), slope)
             var yPoint = (x - xBase)*slope + yBase
             //console.log(yPoint, y)
             if (Math.abs(yPoint - y) < 10){

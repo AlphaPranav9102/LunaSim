@@ -214,6 +214,7 @@ class Stock{
 
     remap(event){
         if (this.state.flows.left != null){
+            console.log(this.state.flows.left)
             this.hyperCanvas.getFeature(this.state.flows.left).state.x2 = this.state.x
             this.hyperCanvas.getFeature(this.state.flows.left).state.y2 = this.state.y + this.state.b/2
         }

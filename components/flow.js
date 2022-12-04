@@ -276,10 +276,9 @@ class Flow {
         for (const features of Object.keys(metadata)){
             var feature = metadata[features].feature
             if (this.boundingBox(feature.state.x, feature.state.y, feature.state.a/2, feature.state.b, [this.state.x2, this.state.y2])){
-                console.log(feature.state.metadata.name)
+                console.log(this.state.metadata.name)
                 this.state.stock.in = feature.state.metadata.name
                 feature.state.flows.left = this.state.metadata.name
-                console.log(feature.state.flows.left)
                 this.state.x2 = feature.state.x
                 this.state.y2 = feature.state.y + feature.state.b/2
             }

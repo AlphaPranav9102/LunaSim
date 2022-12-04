@@ -49,8 +49,8 @@ class FlowMenu {
         self.menu.modalFlowOutside.style.display = "none"
         this.menu.flowSubmit.removeEventListener("click", this.eventMethod)
 
-        try{self.hyperCanvas.getFeature(self.feature.state.stock.in).state.flows.right = self.menu.flowName.value} catch {}
-        try{self.hyperCanvas.getFeature(self.feature.state.stock.out).state.flows.left = self.menu.flowName.value} catch {}
+        try{self.hyperCanvas.getFeature(self.feature.state.stock.out).state.flows.right = self.menu.flowName.value} catch {}
+        try{self.hyperCanvas.getFeature(self.feature.state.stock.in).state.flows.left = self.menu.flowName.value} catch {}
 
         for (const feature of Object.values(self.hyperCanvas.getType("connector"))){
             if (feature.feature.state.connection.in == self.feature.state.metadata.name){

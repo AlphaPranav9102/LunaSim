@@ -16,6 +16,8 @@ var canvas = document.getElementById("modelCanvas")
 console.log(canvas)
 var hyperCanvas = new HyperCanvas(canvas, 100)
 hyperCanvas.initialize()
+var sim = new Simulation(hyperCanvas.getData())
+var results
 
 var features = {
     "stock" : Stock,
@@ -93,24 +95,8 @@ hyperCanvas.menu["converter"] = converterMenu
 
 document.getElementById("runSelector").addEventListener("click", () => {
     console.log(hyperCanvas.getData())
-    var sim = new Simulation(hyperCanvas.getData())
+    sim.setData(hyperCanvas.getData())
     sim.run()
-    var data = sim.data
-    var releaseData = {}
-    for (const stock of Object.values(data.stocks)){
-        releaseData[stock.name] = stock.values
-        for (const inflow of Object.values(stock.inflows)){
-            releaseData[inflow.name] = inflow.values
-        }
-        for (const outflow of Object.values(stock.outflows)){
-            releaseData[outflow.name] = outflow.values
-        }
-    }
-    for (const converter of Object.values(data.converters)){
-        releaseData[converter.name] = converter.values
-    }
-    releaseData["timestep"] = data.time
-    console.log(Object.keys(releaseData)[0])
 
     while (document.getElementById("graphContainer").firstChild) {
         document.getElementById("graphContainer").removeChild(document.getElementById("graphContainer").firstChild);
@@ -121,21 +107,12 @@ document.getElementById("runSelector").addEventListener("click", () => {
         "Graph",
         {},
         {
-            formula: function(x, y) {
-                var dataX = []
-                var dataY = []
-                for (const xD of releaseData[x]){
-                    dataX.push(parseFloat(xD.toFixed(1)))
-                }
-                for (const yD of releaseData[y]){
-                    dataY.push(parseFloat(yD.toFixed(2)))
-                }
-                console.log(releaseData[x], releaseData[y])
-                return [dataX, dataY]
+            formula: function(xName, yName) {
+                return [sim.getValues(xName), sim.getValues(yName)]
             },
             selectedOptionsX: "timestep",
-            selectedOptionsY: Object.keys(releaseData),
-            allOptions: Object.keys(releaseData)
+            selectedOptionsY: sim.getAllNames(),
+            allOptions: sim.getAllNames()
         },
         modal
     )
@@ -185,12 +162,17 @@ document.getElementById("setupSelector").onclick = processEnv
 
 
 document.getElementById("fileDownload").onclick = function () {
-    var sim = new Simulation(hyperCanvas.getData())
-    sim.run()
-    var dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(sim.data));
-    var dlAnchorElem = document.getElementById('downloadAnchorElem');
-    dlAnchorElem.setAttribute("href",     dataStr     );
-    dlAnchorElem.setAttribute("download", `${hyperCanvas.state.env_name}.luna`);
+    var dataStr = ""
+    sim.setData(hyperCanvas.getData())
+    try {
+        results = sim.run()
+        dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(results))
+    } catch {
+        dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(hyperCanvas.getData()))
+    }
+    var dlAnchorElem = document.getElementById('downloadAnchorElem')
+    dlAnchorElem.setAttribute("href",     dataStr     )
+    dlAnchorElem.setAttribute("download", `${hyperCanvas.state.env_name}.luna`)
     dlAnchorElem.click();
 }
 

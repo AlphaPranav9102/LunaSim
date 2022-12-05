@@ -1,12 +1,10 @@
 export class Simulation {
     constructor(structData) {
         this.data = structData;
-
-        this.dt = parseFloat(this.data.dt);
-        this.startTime = parseFloat(this.data.start_time);
-        this.endTime = parseFloat(this.data.end_time);
-
-        this.initObjects(); // set initial values for stocks
+        this.dt = parseFloat(structData.dt);
+        this.startTime = parseFloat(structData.start_time);
+        this.endTime = parseFloat(structData.end_time);
+        this.timesteps = [];
     }
 
     /* 
@@ -55,7 +53,7 @@ export class Simulation {
             let value = eval(this.parseObject(stock["equation"]));
             
             stock["safeval"] = value;
-            stock["values"].push(value);
+            stock["values"] = [value];
         }
 
         for (var stockName in this.data.stocks) {
@@ -63,15 +61,15 @@ export class Simulation {
 
             // initialize flows
             for (var flowName in stock["inflows"]) {
-                this.data.stocks[stockName]["inflows"][flowName]["values"].push(eval(this.parseObject(this.data.stocks[stockName]["inflows"][flowName]["equation"])));
+                this.data.stocks[stockName]["inflows"][flowName]["values"] = [eval(this.parseObject(this.data.stocks[stockName]["inflows"][flowName]["equation"]))];
             }
             for (var flowName in stock["outflows"]) {
-                this.data.stocks[stockName]["outflows"][flowName]["values"].push(eval(this.parseObject(this.data.stocks[stockName]["outflows"][flowName]["equation"])));
+                this.data.stocks[stockName]["outflows"][flowName]["values"] = [eval(this.parseObject(this.data.stocks[stockName]["outflows"][flowName]["equation"]))];
             }
         }
 
         for (var converterName in this.data.converters) {
-            this.data.converters[converterName]["values"].push(eval(this.parseObject(this.data.converters[converterName]["equation"])));
+            this.data.converters[converterName]["values"] = [eval(this.parseObject(this.data.converters[converterName]["equation"]))];
         }
     }
 
@@ -98,7 +96,7 @@ export class Simulation {
             this.data.converters[converterName]["values"] = [];
         }
 
-        this.data.time = []
+        this.timesteps = [];
     }
 
     /* 
@@ -139,9 +137,10 @@ export class Simulation {
     Runs model using Euler's method.
     */
     euler() {
-        console.log(this.startTime, this.endTime, this.dt)
+        console.log(this.startTime, this.endTime, this.dt);
         for (var t = this.startTime + this.dt; parseFloat(t.toFixed(5)) <= parseFloat(this.endTime.toFixed(5)); t += this.dt) { // (skip start time as that was covered in this.initObjects())
-            this.data.time.push(t)
+            this.timesteps.push(parseFloat(t.toFixed(5)));
+            
             // Calculate new values for all stocks
             for (var stockName in this.data.stocks) {
                 let stock = this.data.stocks[stockName];
@@ -183,7 +182,8 @@ export class Simulation {
     */
     rk4() {
         for (var t = this.startTime + this.dt; parseFloat(t.toFixed(5)) <= parseFloat(this.endTime.toFixed(5)); t += this.dt) { // use high precision to make sure correct number of iterations
-            this.data.time.push(t.toFixed(4))
+            this.timesteps.push(parseFloat(t.toFixed(5)));
+
             let y0_dict = {};
             let k1_dict = {};
             let k2_dict = {};
@@ -271,17 +271,91 @@ export class Simulation {
         }
     }
 
+    /*
+    Sets the data for the model.  This also resets the model (safevals and values list).
+    */
+    setData(structData) {
+        this.data = structData;
+        this.dt = parseFloat(structData.dt);
+        this.startTime = parseFloat(structData.start_time);
+        this.endTime = parseFloat(structData.end_time);
+        this.reset();
+    }
+
+    /*
+    Returns the values list (IN INT FORMAT) for a given name of an object (can be stock, flow, or converter).
+    */
+    getValues(objectName) {
+        var res = [];
+
+        if (objectName == "timesteps") {
+            res = this.timesteps;
+        }
+
+        if (objectName in this.data.stocks) {
+            res = this.data.stocks[objectName]["values"];
+        }
+        else if (objectName in this.data.converters) { 
+            res = this.data.converters[objectName]["values"];
+        } else {
+            for (var stockName in this.data.stocks) {
+                for (var inflow in this.data.stocks[stockName]["inflows"]) {
+                    if (objectName == this.data.stocks[stockName]["inflows"][inflow]["name"]) {
+                        res = this.data.stocks[stockName]["inflows"][inflow]["values"];
+                    }
+                }
+                for (var outflow in this.data.stocks[stockName]["outflows"]) {
+                    if (objectName == this.data.stocks[stockName]["outflows"][outflow]["name"]) {
+                        res = this.data.stocks[stockName]["outflows"][outflow]["values"];
+                    }
+                }
+            }
+        }
+
+        // since the values list are a list of strings, we have to convert them into ints
+        var res2 = [];
+        for (var i = 0; i < res.length; i++) {
+            res2.push(parseFloat(res[i].toFixed(5)));
+        }
+
+        return res2;
+    }
+
+    /*
+    Returns all the names of the objects (stocks, flows, and converters) in the model.
+    */
+    getAllNames() {
+        var res = ["timesteps"];
+        for (var stockName of Object.keys(this.data.stocks)) {
+            res.push(stockName);
+
+            for (var inflow of Object.keys(this.data.stocks[stockName]["inflows"])) {
+                res.push(this.data.stocks[stockName]["inflows"][inflow]["name"]);
+            }
+            for (var outflow of Object.keys(this.data.stocks[stockName]["outflows"])) {
+                res.push(this.data.stocks[stockName]["outflows"][outflow]["name"]);
+            }
+        }
+        for (var converterName of Object.keys(this.data.converters)) {
+            res.push(converterName);
+        }
+
+        return res;
+    }
+
     /* 
     Runs the model. 
     This is the function called by frontend.
     */
     run() {
-        this.reset();
+        this.initObjects(); // set initial values for stocks
+
         if (this.data["integration_method"] == "euler") {
             this.euler();
-            console.log(this.data)
         } else if (this.data["integration_method"] == "rk4") {
             this.rk4();
         }
+
+        return this.data;
     }
 }

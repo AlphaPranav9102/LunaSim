@@ -110,7 +110,7 @@ document.getElementById("runSelector").addEventListener("click", () => {
             formula: function(xName, yName) {
                 return [sim.getValues(xName), sim.getValues(yName)]
             },
-            selectedOptionsX: "timestep",
+            selectedOptionsX: "timesteps",
             selectedOptionsY: sim.getAllNames(),
             allOptions: sim.getAllNames()
         },

@@ -149,7 +149,7 @@ class Flow {
             this.state.creation = false
             this.state.resize = true
             this.state.x1 = event.x-50
-            this.state.y1 = event.y-50
+            this.state.y1 = event.y
             this.state.x2 = event.x
             this.state.y2 = event.y
             this.state.resizeInteraction.corner = "right"

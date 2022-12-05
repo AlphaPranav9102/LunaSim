@@ -1,4 +1,5 @@
 import { Component } from "../components/component.js"
+import { Menu } from "./menu.js"
 
 class FlowMenu {
     constructor(menu, hyperCanvas) {
@@ -28,22 +29,18 @@ class FlowMenu {
     }
 
     validation() {
-        if (Component.name.includes(self.menu.flowName.value)){
-            document.getElementById("flowError").innerText = "Name taken by component"
-            return false
-        }
-        if (self.menu.flowName.value == ""){
-            document.getElementById("flowError").innerText = "Name can't be blank"
-            return false
-        }
-        document.getElementById("flowError").innerText = ""
-        return true
+        return (
+            Menu.validation(self.menu.flowName.name, "names", "flowError", "Name taken by component") 
+            && Menu.validation(self.menu.flowName.value, "blank", "flowError", "Name is blank")
+            && Menu.validation(self.menu.flowEquation.value, "blank", "flowError", "Equation is blank")
+        )
     }
 
     sendInfo(self){
         if (self.validation(self) == false){
             return false
         }
+
         Component.name.push(self.menu.flowName.value)
         self.state.using = false
         self.menu.modalFlowOutside.style.display = "none"

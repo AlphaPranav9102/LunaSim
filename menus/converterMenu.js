@@ -1,4 +1,5 @@
 import { Component } from "../components/component.js"
+import { Menu } from "./menu.js"
 
 class ConverterMenu {
     constructor(menu, hyperCanvas) {
@@ -28,12 +29,11 @@ class ConverterMenu {
     }
 
     validation(self) {
-        if (Component.name.includes(self.menu.converterName.value)){
-            document.getElementById("converterError").innerText = "Name taken by component"
-            return false
-        }
-        document.getElementById("converterError").innerText = ""
-        return true
+        return (
+            Menu.validation(self.menu.converterName.name, "names", "converterError", "Name taken by component") 
+            && Menu.validation(self.menu.converterName.value, "blank", "converterError", "Name is blank")
+            && Menu.validation(self.menu.converterEquation.value, "blank", "converterError", "Equation is blank")
+        )
     }
 
     sendInfo(self){

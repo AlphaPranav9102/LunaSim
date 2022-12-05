@@ -1,4 +1,5 @@
 import { Component } from "../components/component.js"
+import { Menu } from "./menu.js"
 
 class StockMenu {
     constructor(menu, hyperCanvas) {
@@ -28,16 +29,11 @@ class StockMenu {
     }
 
     validation() {
-        if (Component.name.includes(self.menu.stockName.value)){
-            document.getElementById("stockError").innerText = "Name taken by component"
-            return false
-        }
-        if (self.menu.stockName.value == ""){
-            document.getElementById("stockError").innerText = "Name can't be blank"
-            return false
-        }
-        document.getElementById("stockError").innerText = ""
-        return true
+        return (
+            Menu.validation(self.menu.stockName.value, "names", "stockError", "Name taken by component") 
+            && Menu.validation(self.menu.stockName.value, "blank", "stockError", "Name is blank")
+            && Menu.validation(self.menu.stockEquation.value, "blank", "stockError", "Equation is blank")
+        )
     }
 
     sendInfo(self){

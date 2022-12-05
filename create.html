@@ -136,7 +136,7 @@
                         d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z"
                         clip-rule="evenodd"></path>
                 </svg>Graphs</h5>
-            <div id="graphContainer" class="w-full h-[12rem]"></div>
+            <div id="graphContainer" class="w-full h-[18rem]"></div>
         </div>
     </div>
 
@@ -185,11 +185,17 @@
     </div>
 
     <div id="modalGraphOutside" class="z-20 w-screen h-screen grid w-full hidden fixed bg-[#00000030] ">
-        <div class="absolute z-30 w-120 p-10 h-120 mt-40 mx-auto justify-self-center bg-white rounded-2xl">
+        <div class="absolute z-30 w-120 p-10 h-160 mt-40 mx-auto justify-self-center bg-white rounded-2xl">
             <div class="text-lg mt-5">
                 <h1 class="text-4xl font-bold mb-4">Edit Graph</h1>
-                <form class="space-y-6 mt-4" id="formContainer">
-                    <div id="editableFormContainer" class="space-y-6">
+                <h1 class="text-2xl font-bold mb-4">x-axis</h1>
+                <form class="space-y-6 mt-4" id="formXContainer">
+                    <div id="editableFormXContainer" class="space-y-6">
+                    </div>
+                </form>
+                <h1 class="text-2xl font-bold mt-4">y-axis</h1>
+                <form class="space-y-6 mt-4" id="formYContainer">
+                    <div id="editableFormYContainer" class="space-y-6">
                     </div>
                 </form>
                 <button id="typeSubmit"

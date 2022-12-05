@@ -51,17 +51,19 @@ class HyperCanvas {
                 }
 
                 try {
-                    stockData.inflows[this.features[feature].feature.state.flows.left.state.metadata.name] = {
+                    stockData.inflows[this.getFeature(this.features[feature].feature.state.flows.left).state.metadata.name] = {
+                        name: this.getFeature(this.features[feature].feature.state.flows.left).state.metadata.name,
                         values: [],
-                        equation: this.features[feature].feature.state.flows.left.state.metadata.equation
+                        equation: this.getFeature(this.features[feature].feature.state.flows.left).state.metadata.equation
                     }
                         
                 } catch {}
 
                 try {
-                    stockData.outflows[this.features[feature].feature.state.flows.right.state.metadata.name] = {
+                    stockData.outflows[this.getFeature(this.features[feature].feature.state.flows.right).state.metadata.name] = {
+                        name: this.getFeature(this.features[feature].feature.state.flows.right).state.metadata.name,
                         values: [],
-                        equation: this.features[feature].feature.state.flows.right.state.metadata.equation
+                        equation: this.getFeature(this.features[feature].feature.state.flows.right).state.metadata.equation
                     }
                 } catch {}
                 
@@ -71,6 +73,7 @@ class HyperCanvas {
             }
             else if (this.features[feature].feature.type == "converter"){
                 this.data.converters[this.features[feature].feature.state.metadata.name] = {
+                    name: this.features[feature].feature.state.metadata.name,
                     values: [],
                     equation: this.features[feature].feature.state.metadata.equation
                 }

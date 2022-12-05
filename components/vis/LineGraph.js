@@ -8,7 +8,7 @@ class LineGraph {
 
         this.companionDiv = document.createElement("div")
         this.companionDiv.classList.add("p-4", "border-2", "border-gray-200", "rounded-lg")
-        this.companionDiv.style.width = "325px"
+        this.companionDiv.style.width = "500px"
         this.companionDiv.id = this.uuid
 
         document.getElementById(parent_id).appendChild(this.companionDiv)
@@ -32,7 +32,8 @@ class LineGraph {
 
         this.formula = dataOptions.formula
 
-        this.selectedColumnOptions = dataOptions.selectedOptions
+        this.selectedOptionsX = dataOptions.selectedOptionsX
+        this.selectedOptionsY = dataOptions.selectedOptionsY
         this.allColumnOptions = dataOptions.allOptions
 
         this.generateData()
@@ -65,23 +66,21 @@ class LineGraph {
 
     generateData() {
         this.generatedData = []
-        for (const teams of this.selectedColumnOptions){
-            
-            [this.xAxis, this.yAxis] = this.formula(teams)
+        for (const names of this.selectedOptionsY){
+            [this.xAxis, this.yAxis] = this.formula(this.selectedOptionsX, names)
+            console.log(this.xAxis, this.yAxis)
             this.generatedData.push({
-                name: teams.toString(),
+                name: names.toString(),
                 data: this.xAxis.reduce((acc, current, index) => {
                     return [...acc, {x: current, y: this.yAxis[index]}]
                   }, [])
             })
         }
-
-
-        console.log(this.generatedData)
     }
 
     setupEdit() {
-        var formString = ``
+        var formStringX = ``
+        var formStringY = ``
 
         var self = this
         this.modal.setCallBackClose(function () {
@@ -89,33 +88,57 @@ class LineGraph {
         })
 
         for (const i of this.allColumnOptions) {
-            if (this.selectedColumnOptions.includes(i)) {
-                formString += `
+            if (this.selectedOptionsY.includes(i)) {
+                formStringY += `
                 <div class="flex items-center">
-                    <input checked id="${i}${this.uuid}" type="checkbox" value="" style="transform: scale(1.3);" class="w-4 h-4 text-blue-600 bg-gray-100 rounded border-gray-300 focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"/>
+                    <input checked id="${i}${this.uuid}Y" type="checkbox" value="" style="transform: scale(1.3);" class="w-4 h-4 text-blue-600 bg-gray-100 rounded border-gray-300 focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"/>
                     <label id="for="${i}${this.uuid}" class="ml-3 text-md font-medium">${i}</label>
                 </div>
                 `
             }
             else {
-                formString += `
+                formStringY += `
                 <div class="flex items-center">
-                    <input id="${i}${this.uuid}" type="checkbox" value="" style="transform: scale(1.3);" class="w-4 h-4 text-blue-600 bg-gray-100 rounded border-gray-300 focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"/>
+                    <input id="${i}${this.uuid}Y" type="checkbox" value="" style="transform: scale(1.3);" class="w-4 h-4 text-blue-600 bg-gray-100 rounded border-gray-300 focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"/>
+                    <label for="${i}${this.uuid}" class="ml-3 text-md font-medium">${i}</label>
+                </div>
+                `
+            }
+            if (this.selectedOptionsX == i) {
+                formStringX += `
+                <div class="flex items-center">
+                    <input checked id="${i}${this.uuid}X" name="options" type="radio" value="" style="transform: scale(1.3);" class="w-4 h-4 text-blue-600 bg-gray-100 rounded border-gray-300 focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"/>
+                    <label id="for="${i}${this.uuid}" class="ml-3 text-md font-medium">${i}</label>
+                </div>
+                `
+            }
+            else {
+                formStringX += `
+                <div class="flex items-center">
+                    <input id="${i}${this.uuid}X" type="radio" name="options" value="" style="transform: scale(1.3);" class="w-4 h-4 text-blue-600 bg-gray-100 rounded border-gray-300 focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"/>
                     <label for="${i}${this.uuid}" class="ml-3 text-md font-medium">${i}</label>
                 </div>
                 `
             }
         }
 
-        this.modal.formHTML = formString
+        this.modal.formHTMLX = formStringX
+        this.modal.formHTMLY = formStringY
     }
 
     pushEdit(modal = true, x = []) {
         if (modal){
-            this.selectedColumnOptions = []
+            this.selectedOptionsY = []
             for (const i of this.allColumnOptions) {
-                if (document.getElementById(i.toString() + this.uuid.toString()).checked) {
-                    this.selectedColumnOptions.push(i)
+                if (document.getElementById(i.toString() + this.uuid.toString() + "Y").checked) {
+                    this.selectedOptionsY.push(i)
+                }
+            }
+            this.selectedOptionsX = ""
+            for (const i of this.allColumnOptions) {
+                if (document.getElementById(i.toString() + this.uuid.toString() + "X").checked) {
+                    this.selectedOptionsX = i
+                    break
                 }
             }
         }

@@ -1,4 +1,4 @@
 export class Component {
-    static name = []
+    static name = ["timestep"]
     static id = []
 }

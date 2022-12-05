@@ -97,6 +97,8 @@ export class Simulation {
         for (var converterName in this.data.converters) {
             this.data.converters[converterName]["values"] = [];
         }
+
+        this.data.time = []
     }
 
     /* 
@@ -139,7 +141,7 @@ export class Simulation {
     euler() {
         console.log(this.startTime, this.endTime, this.dt)
         for (var t = this.startTime + this.dt; parseFloat(t.toFixed(5)) <= parseFloat(this.endTime.toFixed(5)); t += this.dt) { // (skip start time as that was covered in this.initObjects())
-            console.log(t)
+            this.data.time.push(t)
             // Calculate new values for all stocks
             for (var stockName in this.data.stocks) {
                 let stock = this.data.stocks[stockName];
@@ -181,6 +183,7 @@ export class Simulation {
     */
     rk4() {
         for (var t = this.startTime + this.dt; parseFloat(t.toFixed(5)) <= parseFloat(this.endTime.toFixed(5)); t += this.dt) { // use high precision to make sure correct number of iterations
+            this.data.time.push(t.toFixed(4))
             let y0_dict = {};
             let k1_dict = {};
             let k2_dict = {};

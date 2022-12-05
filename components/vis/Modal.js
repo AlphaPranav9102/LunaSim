@@ -1,11 +1,13 @@
 class Modal {
-    constructor (mainID, closeID, formID){
+    constructor (mainID, closeID, formIDX, formIDY){
         this.mainID = mainID
         this.closeID = closeID
-        this.formID = formID
+        this.formIDX = formIDX
+        this.formIDY = formIDY
         this.callBackOpen = function () {}
         this.callBackClose = function () {}
-        this.formHTML = ""
+        this.formHTMLX = ""
+        this.formHTMLY = ""
 
     }
 
@@ -27,8 +29,12 @@ class Modal {
         console.log("set")
     }
 
-    set formHTML(HTML){
-        document.getElementById(this.formID).innerHTML = HTML
+    set formHTMLX(HTMLX){
+        document.getElementById(this.formIDX).innerHTML = HTMLX
+    }
+
+    set formHTMLY(HTMLY){
+        document.getElementById(this.formIDY).innerHTML = HTMLY
     }
 }
 

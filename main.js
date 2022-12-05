@@ -95,10 +95,53 @@ document.getElementById("runSelector").addEventListener("click", () => {
     console.log(hyperCanvas.getData())
     var sim = new Simulation(hyperCanvas.getData())
     sim.run()
-    console.log(sim.data)
+    var data = sim.data
+    var releaseData = {}
+    for (const stock of Object.values(data.stocks)){
+        releaseData[stock.name] = stock.values
+        for (const inflow of Object.values(stock.inflows)){
+            releaseData[inflow.name] = inflow.values
+        }
+        for (const outflow of Object.values(stock.outflows)){
+            releaseData[outflow.name] = outflow.values
+        }
+    }
+    for (const converter of Object.values(data.converters)){
+        releaseData[converter.name] = converter.values
+    }
+    releaseData["timestep"] = data.time
+    console.log(Object.keys(releaseData)[0])
+
+    while (document.getElementById("graphContainer").firstChild) {
+        document.getElementById("graphContainer").removeChild(document.getElementById("graphContainer").firstChild);
+    }
+
+    var lines = new LineGraph(
+        "graphContainer",
+        "Graph",
+        {},
+        {
+            formula: function(x, y) {
+                var dataX = []
+                var dataY = []
+                for (const xD of releaseData[x]){
+                    dataX.push(parseFloat(xD.toFixed(1)))
+                }
+                for (const yD of releaseData[y]){
+                    dataY.push(parseFloat(yD.toFixed(2)))
+                }
+                console.log(releaseData[x], releaseData[y])
+                return [dataX, dataY]
+            },
+            selectedOptionsX: "timestep",
+            selectedOptionsY: Object.keys(releaseData),
+            allOptions: Object.keys(releaseData)
+        },
+        modal
+    )
 })
 
-var modal = new Modal("modalGraphOutside", "typeSubmit","editableFormContainer")
+var modal = new Modal("modalGraphOutside", "typeSubmit","editableFormXContainer", "editableFormYContainer")
 
 document.getElementById("drawerGraph").onclick = function (e) {
     console.log(e.target)
@@ -107,17 +150,7 @@ document.getElementById("drawerGraph").onclick = function (e) {
     }
 }
 
-var lines = new LineGraph(
-    "graphContainer",
-    "",
-    {},
-    {
-      formula: function(team) {return [[1,2,3,4,5,6,7,8,9,10], [1,2,3,4,5,6,7,8,9,10]]},
-      selectedOptions: [1],
-      allOptions: [1,2,3]
-    },
-    modal
-)
+
 
 var getEnv = false
 

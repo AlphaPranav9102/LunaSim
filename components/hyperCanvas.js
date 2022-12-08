@@ -7,7 +7,7 @@ class HyperCanvas {
         this.periodicTasks = {};
         this.features = {};
         this.globalTick = 0;
-        this.pageOffsetY = 48; // adds offset to canvas to account for header
+        this.pageOffsetY = 55; // adds offset to canvas to account for header
         this.frameRate = frameRate
         this.menu = {}
         this.menuUsage = 0
@@ -188,6 +188,16 @@ class HyperCanvas {
         setInterval(function () { self.runPeriodic() }, 1000/this.frameRate)
         this.setPeriodic("canvas.clear", function () {
             self.canvas.width += 0
+            self.context.fillStyle = "rgb(125, 125, 125)"
+            for (var x = 5; x < self.canvas.width; x += 15){
+                for (var y = 5; y < self.canvas.height; y += 15){
+                    self.context.strokeStyle = "rgb(200, 200, 200)"
+                    self.context.beginPath()
+                    self.context.arc(x, y, 0.5, 0, 2 * Math.PI, false)
+                    self.context.stroke()
+                }
+            }
+            //self.context.fillRect(0, 0, self.canvas.width, self.canvas.height)
         }, 1, 1)
 
         this.size = [

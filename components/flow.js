@@ -35,8 +35,12 @@ class Flow {
                 x: null,
                 y: null
             },
+            width: 20,
             deleted: false
         }
+
+        this.component = new Component()
+        this.setBounds()
     }
 
     validate(event, hitbox=false){
@@ -68,41 +72,21 @@ class Flow {
             if (this.state.creation == true){
                 isValidated = true
             }
-            else if (this.boundingBox(this.state.x1 - 10, this.state.y1 - 10, 20, 20, [event.x, event.y]) && this.state.selected){
+            else if (this.component.validateBounding("left", event) && this.state.selected){
                 if (!hitbox){
                     this.state.resize = true
                     this.state.resizeInteraction.corner = "left"
                 }
                 isValidated = true
             }
-            else if (this.boundingBox(this.state.x2 - 10, this.state.y2 - 10, 20, 20, [event.x, event.y]) && this.state.selected){
+            else if (this.component.validateBounding("right", event) && this.state.selected){
                 if (!hitbox){
                     this.state.resize = true
                     this.state.resizeInteraction.corner = "right"
                 }
                 isValidated = true
             }
-            else if (this.boundingBox(this.state.x1, this.state.y1-10, Math.abs(this.state.x1 - this.state.x2 + 15)/2, 20, [event.x, event.y])){
-                if (!hitbox){
-                    if (this.state.selected){
-                        this.state.move = true
-                        this.cache(event)
-                    }
-                    this.state.selected = true
-                }
-                isValidated = true
-            }
-            else if (this.boundingBox((this.state.x1 + this.state.x2 - 15)/2-10, Math.min(this.state.y1, this.state.y2)-10, 20, Math.max(this.state.y1, this.state.y2) + 10, [event.x, event.y])){
-                if (!hitbox){
-                    if (this.state.selected){
-                        this.state.move = true
-                        this.cache(event)
-                    }
-                    this.state.selected = true
-                }
-                isValidated = true
-            }
-            else if (this.boundingBox((this.state.x1 + this.state.x2 - 15)/2-10, this.state.y2-10, Math.abs(this.state.x1 - this.state.x2 + 15)/2+10, 20, [event.x, event.y])){
+            else if (this.component.validateBounding("main", event)){
                 if (!hitbox){
                     if (this.state.selected){
                         this.state.move = true
@@ -178,7 +162,48 @@ class Flow {
         }
 
         this.cache(event)
+        this.setBounds()
     }
+
+    setBounds(){
+        this.component.resetBounding()
+        this.component.setBounding("main", {
+            type: "rect",
+            x: this.state.x1,
+            y: this.state.y1-this.state.width/2,
+            a: Math.abs(this.state.x1 - this.state.x2 + 15)/2,
+            b: this.state.width
+        })
+        this.component.setBounding("main", {
+            type: "rect",
+            x: (this.state.x1 + this.state.x2 - 15)/2-this.state.width/2,
+            y: Math.min(this.state.y1, this.state.y2)-10,
+            a: this.state.width,
+            b: Math.max(this.state.y1, this.state.y2) + this.state.width/2
+        })
+        this.component.setBounding("main", {
+            type: "rect",
+            x: (this.state.x1 + this.state.x2 - 15)/2 - this.state.width/2,
+            y: this.state.y2-this.state.width/2,
+            a: Math.abs(this.state.x1 - this.state.x2 + 15)/2 + this.state.width/2,
+            b: this.state.width
+        })
+        this.component.setBounding("left", {
+            type: "rect",
+            x: this.state.x1 - Component.editBoxSize/2,
+            y: this.state.y1 - Component.editBoxSize/2,
+            a: Component.editBoxSize,
+            b: Component.editBoxSize
+        })
+        this.component.setBounding("right", {
+            type: "rect",
+            x: this.state.x2 - Component.editBoxSize/2,
+            y: this.state.y2 - Component.editBoxSize/2,
+            a: Component.editBoxSize,
+            b: Component.editBoxSize
+        })
+    }
+    
     cache(event) {
         this.state.prevInteraction.x = event.x
         this.state.prevInteraction.y = event.y
@@ -190,8 +215,9 @@ class Flow {
         if (this.state.creation == false){
             var arrowWidth = 15
             var arrowY = null
+            context.strokeStyle = "rgb(0, 0, 0)"
             if (Math.abs(this.state.y2 - this.state.y1) > 15){
-                var flowWidth = 10
+                var flowWidth = this.state.width/3
                 var direction = flowWidth * Math.abs(this.state.y1 - this.state.y2) / (this.state.y1 - this.state.y2)
 
                 context.beginPath()
@@ -232,10 +258,10 @@ class Flow {
             context.fillStyle = "rgb(0, 125, 0)"
             context.lineWidth = 3;
             context.beginPath()
-            context.moveTo(this.state.x2-arrowWidth, arrowY - 20)
+            context.moveTo(this.state.x2-arrowWidth, arrowY - Component.editBoxSize)
             context.lineTo(this.state.x2, arrowY)
-            context.lineTo(this.state.x2-arrowWidth, arrowY + 20)
-            context.lineTo(this.state.x2-arrowWidth, arrowY - 20)
+            context.lineTo(this.state.x2-arrowWidth, arrowY + Component.editBoxSize)
+            context.lineTo(this.state.x2-arrowWidth, arrowY - Component.editBoxSize)
             context.lineTo(this.state.x2, arrowY)
             context.font = '18px verdana';
             context.fillStyle = "rgb(0, 0, 125)"
@@ -282,7 +308,7 @@ class Flow {
                 this.state.x2 = feature.state.x
                 this.state.y2 = feature.state.y + feature.state.b/2
             }
-            else if (feature.state.flows.left == this){
+            else if (feature.state.flows.left == this.state.metadata.name){
                 feature.state.flows.left = null
             }
             if (this.boundingBox(feature.state.x + feature.state.a/2, feature.state.y, feature.state.a/2, feature.state.b, [this.state.x1, this.state.y1])){
@@ -291,7 +317,7 @@ class Flow {
                 this.state.x1 = feature.state.x + feature.state.a
                 this.state.y1 = feature.state.y + feature.state.b/2
             }
-            else if (feature.state.flows.right == this){
+            else if (feature.state.flows.right == this.state.metadata.name){
                 feature.state.flows.right = null
             }
         }

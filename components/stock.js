@@ -39,6 +39,9 @@ class Stock{
             },
             deleted: false
         }
+
+        this.component = new Component()
+        this.setBounds()
     }
 
     validate(event, hitbox=false){
@@ -69,49 +72,30 @@ class Stock{
             if (this.state.creation){
                 validated = true;
             }
-            else if ((this.boundingBox(this.state.x - 10, this.state.y - 10, 20, 20, [event.x, event.y]))&&
-                (this.state.selected)){
-
+            if (this.component.validateBounding("left", event) && this.state.selected){
                 if (!hitbox){
                     this.state.resize = true
                     this.state.resizeInteraction.corner = "top"
                 }
                 validated = true
-
-                //console.log(1, this.state.x, event.x, this.state.y, event.y)
-
             } 
-            else if ((this.boundingBox(this.state.x + this.state.a - 10, this.state.y + this.state.b - 10, 20, 20, [event.x, event.y])&& 
-                this.state.selected)){
-
-
+            else if (this.component.validateBounding("right", event) && this.state.selected){
                 if (!hitbox){
                     this.state.resize = true
                     this.state.resizeInteraction.corner = "bottom"
                 }
                 validated = true
-
-                //console.log(2)
             }
-            else if ((this.boundingBox(this.state.x, this.state.y, this.state.a, this.state.b, [event.x, event.y]))){
+            else if (this.component.validateBounding("main", event)){
                 if (!hitbox){
-                    if (this.state.selected){
-                        this.state.move = true
-                        this.cache(event)
-                        //console.log(this.state)
-                    }
-                
+                    this.state.move = true
+                    this.cache(event)
                     this.state.selected = true
                 }
-                
                 validated = true
-
-                //console.log(4)
             }
             else {
                 this.state.selected = false
-
-                //console.log(5)
             }
         }
         else if (event.type == "mousemove"){
@@ -136,6 +120,7 @@ class Stock{
     }
 
     input(event){
+        var change = true
         if (this.state.creation){
             this.state.x = event.x
             this.state.y = event.y
@@ -144,6 +129,7 @@ class Stock{
             this.state.resizeInteraction.corner = "bottom"
             this.state.created = true
         }
+
         else if (this.state.resize){
             if (this.state.resizeInteraction.corner == "top"){
                 if (this.state.a + (this.state.x - event.x) > 50){
@@ -163,13 +149,23 @@ class Stock{
             this.remap(event)
         }
         else if (this.state.move){
-            this.state.x += event.x - this.state.prevInteraction.x
-            this.state.y += event.y - this.state.prevInteraction.y
-            this.remap(event)
+            if (this.state.flows.right != null && this.hyperCanvas.getFeature(this.state.flows.right).state.x2 - (this.state.x + this.state.a + event.x - this.state.prevInteraction.x) < 100){
+                change = false
+            }
+            if(this.state.flows.left != null && (this.state.x + event.x - this.state.prevInteraction.x) - this.hyperCanvas.getFeature(this.state.flows.left).state.x1 < 100) {
+                change = false
+            }
+            if (change){
+                this.state.x += event.x - this.state.prevInteraction.x
+                this.state.y += event.y - this.state.prevInteraction.y
+                this.remap(event)
+            }
         }
 
-        this.cache(event)
-        
+        if (change){
+            this.cache(event)
+        }
+        this.setBounds()
     }
 
     cache(event) {
@@ -177,48 +173,83 @@ class Stock{
         this.state.prevInteraction.y = event.y
     }
 
+    setBounds() {
+        this.component.resetBounding()
+        this.component.setBounding("main", {
+            type: "rect",
+            x: this.state.x,
+            y: this.state.y,
+            a: this.state.a,
+            b: this.state.b
+        })
+        this.component.setBounding("left", {
+            type: "rect",
+            x: this.state.x - Component.editBoxSize/2,
+            y: this.state.y - Component.editBoxSize/2,
+            a: Component.editBoxSize,
+            b: Component.editBoxSize
+        })
+        this.component.setBounding("right", {
+            type: "rect",
+            x: this.state.x + this.state.a - Component.editBoxSize/2,
+            y: this.state.y + this.state.b - Component.editBoxSize/2,
+            a: Component.editBoxSize,
+            b: Component.editBoxSize
+        })
+    }
+
     draw(context){
         if (this.state.creation || this.state.deleted){
             return -1
         }
-        context.strokeStyle = "rgb(0, 0, 0)"
-        context.fillStyle = "rgb(255, 255, 255)"
+        for (var i = 0; i < 10; i++){
+            context.strokeStyle = "rgb(117, 117, 117)"
+            context.fillStyle = "rgb(217, 217, 217)"
+            context.beginPath()
+            context.lineWidth = 2.5
+            if (this.state.selected) {context.lineWidth = 3}
+            context.roundRect(this.state.x, this.state.y, this.state.a, this.state.b, 7)
+            context.fill()
+            context.stroke()
+
+            if (this.state.selected){
+                context.beginPath()
+                context.strokeStyle = "rgb(117, 117, 117)"
+                context.fillStyle = "white"
+                context.roundRect(this.state.x-Component.editBoxSize/2, this.state.y-Component.editBoxSize/2, Component.editBoxSize, Component.editBoxSize, 2)
+                context.fill()
+                context.roundRect(this.state.x+this.state.a-Component.editBoxSize/2, this.state.y+this.state.b-Component.editBoxSize/2, Component.editBoxSize, Component.editBoxSize, 2)
+                context.fill()
+                context.stroke()
+            }
+            context.fillStyle = "rgb(0, 0, 0)"
+            context.strokeStyle = "rgb(0, 0, 0)"
+        }
+
         context.beginPath()
-        context.lineWidth = 5
-        context.rect(this.state.x, this.state.y, this.state.a, this.state.b)
-        context.fill()
-        context.font = '18px verdana';
-        context.fillStyle = "rgb(0, 0, 125)"
+        context.fillStyle = "rgb(0, 0, 0)"
+        context.font = '500 16px sans-serif';
         context.fillText(this.state.metadata.name, (this.state.x+this.state.a/2) - this.state.metadata.name.length*5, this.state.y+this.state.b+35);
         context.stroke()
-
-        if (this.state.selected){
-            context.beginPath()
-            context.strokeStyle = "rgb(0, 0, 125)"
-            context.fillStyle = "rgb(0, 0, 125)"
-            context.fillRect(this.state.x-10, this.state.y-10, 20, 20)
-            context.fillRect(this.state.x+this.state.a-10, this.state.y+this.state.b-10, 20, 20)
-            context.stroke()
-        }
-        context.fillStyle = "rgb(0, 0, 0)"
-        context.strokeStyle = "rgb(0, 0, 0)"
-    }
-
-    boundingBox(x, y, a, b, point){
-        if ((x <= point[0] && point[0] <= x+a)&&
-            (y <= point[1] && point[1] <= y+b)){
-                return true
-        }
-        else false
     }
 
     remap(event){
         if (this.state.flows.left != null){
-            console.log(this.state.flows.left)
+            if (this.hyperCanvas.getFeature(this.state.flows.left).state.stock.out == null){
+                this.hyperCanvas.getFeature(this.state.flows.left).state.x1 = (this.state.x - 
+                    (this.hyperCanvas.getFeature(this.state.flows.left).state.x2 
+                    - this.hyperCanvas.getFeature(this.state.flows.left).state.x1))
+            }
             this.hyperCanvas.getFeature(this.state.flows.left).state.x2 = this.state.x
             this.hyperCanvas.getFeature(this.state.flows.left).state.y2 = this.state.y + this.state.b/2
+            
         }
         if (this.state.flows.right != null){
+            if (this.hyperCanvas.getFeature(this.state.flows.right).state.stock.in == null){
+                this.hyperCanvas.getFeature(this.state.flows.right).state.x2 = (this.state.x + this.state.a + 
+                    (this.hyperCanvas.getFeature(this.state.flows.right).state.x2 
+                    - this.hyperCanvas.getFeature(this.state.flows.right).state.x1))
+            }
             this.hyperCanvas.getFeature(this.state.flows.right).state.x1 = this.state.x + this.state.a
             this.hyperCanvas.getFeature(this.state.flows.right).state.y1 = this.state.y + this.state.b/2
         }

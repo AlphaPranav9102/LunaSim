@@ -14,7 +14,7 @@ import { Component } from './components/component.js'
 
 var canvas = document.getElementById("modelCanvas")
 console.log(canvas)
-var hyperCanvas = new HyperCanvas(canvas, 100)
+var hyperCanvas = new HyperCanvas(canvas, 1000)
 hyperCanvas.initialize()
 var sim = new Simulation(hyperCanvas.getData())
 var results

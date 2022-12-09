@@ -114,6 +114,7 @@ class Connector {
         }
         context.beginPath()
         context.strokeStyle = "rgb(0, 0, 0)"
+        context.lineWidth = 2.5
         if (this.state.selected){
             context.strokeStyle = "rgb(0, 125, 125)"
         }

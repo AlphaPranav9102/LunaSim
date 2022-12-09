@@ -324,10 +324,16 @@ export class Simulation {
     /*
     Returns all the names of the objects (stocks, flows, and converters) in the model.
     */
-    getAllNames() {
+    getAllNames(stocks = false) {
         var res = ["timesteps"];
+        if (stocks){
+            var res = [];
+        }
         for (var stockName of Object.keys(this.data.stocks)) {
             res.push(stockName);
+            if (stocks){
+                continue
+            }
 
             for (var inflow of Object.keys(this.data.stocks[stockName]["inflows"])) {
                 res.push(this.data.stocks[stockName]["inflows"][inflow]["name"]);
@@ -335,6 +341,9 @@ export class Simulation {
             for (var outflow of Object.keys(this.data.stocks[stockName]["outflows"])) {
                 res.push(this.data.stocks[stockName]["outflows"][outflow]["name"]);
             }
+        }
+        if (stocks){
+            return res
         }
         for (var converterName of Object.keys(this.data.converters)) {
             res.push(converterName);

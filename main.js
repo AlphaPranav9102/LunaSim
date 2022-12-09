@@ -113,7 +113,7 @@ document.getElementById("runSelector").addEventListener("click", () => {
                 return [sim.getValues(xName), sim.getValues(yName)]
             },
             selectedOptionsX: "timesteps",
-            selectedOptionsY: sim.getAllNames(),
+            selectedOptionsY: sim.getAllNames(true),
             allOptions: sim.getAllNames()
         },
         modal

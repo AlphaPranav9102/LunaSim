@@ -59,6 +59,7 @@ class ConverterMenu {
         self.feature.state.metadata = {
             name : self.menu.converterName.value,
             equation : self.menu.converterEquation.value,
+            color: self.menu.converterColor.value,
             stroke : Component.colorset[self.menu.converterColor.value][0],
             fill : Component.colorset[self.menu.converterColor.value][1]
         }

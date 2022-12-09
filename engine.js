@@ -15,20 +15,20 @@ export class Simulation {
         let objects = {} // stores all stocks, converters, and flows and their respective equation/safeval
 
         for (var stock in this.data.stocks) {
-            objects[stock] = this.data.stocks[stock]["safeval"];
+            objects["$" + stock] = this.data.stocks[stock]["safeval"];
 
             // add the inflows and outflows to the available objects
             for (var flow in this.data.stocks[stock]["inflows"]) {
-                objects[flow] = this.data.stocks[stock]["inflows"][flow]["equation"];
+                objects["$" + flow] = this.data.stocks[stock]["inflows"][flow]["equation"];
             }
             for (var flow in this.data.stocks[stock]["outflows"]) {
-                objects[flow] = this.data.stocks[stock]["outflows"][flow]["equation"];
+                objects["$" + flow] = this.data.stocks[stock]["outflows"][flow]["equation"];
             }
 
         }
 
         for (var converter in this.data.converters) {
-            objects[converter] = this.data.converters[converter]["equation"];
+            objects["$" + converter] = this.data.converters[converter]["equation"];
         }
 
         let sortedObjects = Object.keys(objects).sort((a, b) => a.length - b.length).reverse() // sort by length (descending) to prevent substring errors
@@ -111,8 +111,8 @@ export class Simulation {
         let sumInflow = 0;
         for (var i in inflows) {
             let flowEq = inflows[i]["equation"];
-            if (flowEq.includes("$")) { // check if flow is a uniflow
-                flowEq = flowEq.replace('$', '');
+            if (flowEq.includes("#")) { // check if flow is a uniflow
+                flowEq = flowEq.replace('#', '');
                 sumInflow += Math.max(0, eval(this.parseObject(flowEq)));
             } else {
                 sumInflow += eval(this.parseObject(flowEq));
@@ -122,8 +122,8 @@ export class Simulation {
         let sumOutflow = 0;
         for (var i in outflows) {
             let flowEq = outflows[i]["equation"];
-            if (flowEq.includes("$")) { // check if flow is a uniflow
-                flowEq = flowEq.replace('$', '');
+            if (flowEq.includes("#")) { // check if flow is a uniflow
+                flowEq = flowEq.replace('#', '');
                 sumOutflow += Math.max(0, eval(this.parseObject(flowEq)));
             } else {
                 sumOutflow += eval(this.parseObject(flowEq));

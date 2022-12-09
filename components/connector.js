@@ -40,12 +40,15 @@ class Connector {
             }
         }
         else if (event.type == "mousedown"){
+            console.log("test mousedown 1")
             if (this.state.creation == true){
+                console.log("test mousedown")
                 var isClicked = this.onObject(event.x, event.y, ["stock", "flow", "converter"])
                 if (isClicked != null){
                     console.log(isClicked)
                     this.state.connection.in = isClicked.state.metadata.name
                     console.log(this.state.connection.in)
+                    this.state.creation = false
                     this.state.creating = true
                     validated = true
                 }
@@ -64,7 +67,7 @@ class Connector {
             }
         }
         else if (event.type == "click"){
-            if (this.state.creation == true){
+            if (this.state.creating == true){
                 var isClicked = this.onObject(event.x, event.y, ["flow", "converter"])
                 console.log(isClicked)
                 if (isClicked != null){
@@ -75,6 +78,7 @@ class Connector {
                 else {
                     this.state.connection.in = null
                     this.state.connection.out = null
+                    this.state.deleted = true
                 }
             }
         }
@@ -84,7 +88,7 @@ class Connector {
     }
 
     input(event){
-        if (this.state.creation){
+        if (this.state.creating){
             this.state.connection.out = {
                 x: event.x,
                 y: event.y
@@ -105,12 +109,11 @@ class Connector {
         if (this.state.deleted){
             return -1
         }
-
         if (this.state.connection.in == null){
             return false
         }
-        context.fillStyle = "rgb(255, 255, 255)"
         context.beginPath()
+        context.strokeStyle = "rgb(0, 0, 0)"
         if (this.state.selected){
             context.strokeStyle = "rgb(0, 125, 125)"
         }

@@ -215,20 +215,33 @@ class Flow {
         if (this.state.creation == false){
             var arrowWidth = 15
             var arrowY = null
-            context.strokeStyle = "rgb(0, 0, 0)"
+            context.strokeStyle = "rgb(70, 70, 70)"
             if (Math.abs(this.state.y2 - this.state.y1) > 15){
+                var radiusInner = 10
+                var radiusOuter = 15
                 var flowWidth = this.state.width/3
-                var direction = flowWidth * Math.abs(this.state.y1 - this.state.y2) / (this.state.y1 - this.state.y2)
+                var abs = Math.abs(this.state.y1 - this.state.y2) / (this.state.y1 - this.state.y2)
+                var direction = flowWidth * abs
 
                 context.beginPath()
                 context.moveTo(this.state.x1, this.state.y1 - direction)
-                context.lineTo((this.state.x1 + this.state.x2-arrowWidth)/2-flowWidth, this.state.y1 - direction)
-                context.lineTo((this.state.x1 + this.state.x2-arrowWidth)/2-flowWidth, this.state.y2 - direction)
+
+                context.lineTo((this.state.x1 + this.state.x2-arrowWidth)/2-flowWidth - radiusInner, this.state.y1 - direction)
+                context.arc((this.state.x1 + this.state.x2-arrowWidth)/2-flowWidth - radiusInner, this.state.y1 - (direction + 1 * abs * radiusInner), radiusInner, (1 + -0.5*abs)*Math.PI, 0, !!(abs+1))
+
+                context.lineTo((this.state.x1 + this.state.x2-arrowWidth)/2-flowWidth, this.state.y2 - (direction + -1 * abs * radiusOuter))
+                context.arc((this.state.x1 + this.state.x2-arrowWidth)/2-flowWidth + radiusOuter, this.state.y2 - (direction + -1 * abs * radiusOuter), radiusOuter, 1*Math.PI, (1 + 0.5*abs)*Math.PI, !!(-abs+1))
+                //context.stroke();
+                //context.beginPath()
                 context.lineTo(this.state.x2-arrowWidth, this.state.y2 - direction)
                 context.moveTo(this.state.x2-arrowWidth, this.state.y2 + direction)
-                context.lineTo((this.state.x1 + this.state.x2-arrowWidth)/2+flowWidth, this.state.y2 + direction)
-                context.lineTo((this.state.x1 + this.state.x2-arrowWidth)/2+flowWidth, this.state.y1 + direction)
-                context.lineTo((this.state.x1 + this.state.x2-arrowWidth)/2+flowWidth, this.state.y1 + direction)
+
+                context.lineTo((this.state.x1 + this.state.x2-arrowWidth)/2+flowWidth + radiusInner, this.state.y2 + direction)
+                context.arc((this.state.x1 + this.state.x2-arrowWidth)/2+flowWidth + radiusInner,  this.state.y2 + direction + (radiusInner * abs), radiusInner, (1 + 0.5*abs)*Math.PI, 1*Math.PI, !!(abs+1))
+
+                context.lineTo((this.state.x1 + this.state.x2-arrowWidth)/2+flowWidth, this.state.y1 + direction + (radiusOuter * -abs))
+                context.arc((this.state.x1 + this.state.x2-arrowWidth)/2+flowWidth - radiusOuter, this.state.y1 - direction , radiusOuter, 0, (1 + -0.5*abs)*Math.PI, !!(-abs+1))
+
                 context.lineTo(this.state.x1, this.state.y1 + direction)
                 //context.lineTo(this.state.x1, this.state.y1 - direction)
                 //context.lineTo((this.state.x1 + this.state.x2-arrowWidth)/2-flowWidth, this.state.y1 - direction)
@@ -239,8 +252,8 @@ class Flow {
 
             }
             else {
-                var flowWidth = 10
-                var direction = 10
+                var flowWidth = this.state.width/3
+                var direction = this.state.width/3
 
                 context.beginPath()
                 context.moveTo(this.state.x1, this.state.y1 - direction)
@@ -255,7 +268,7 @@ class Flow {
                 arrowY = this.state.y1
             }
 
-            context.fillStyle = "rgb(0, 125, 0)"
+            context.fillStyle = "#00000000"
             context.lineWidth = 3;
             context.beginPath()
             context.moveTo(this.state.x2-arrowWidth, arrowY - Component.editBoxSize)
@@ -263,8 +276,10 @@ class Flow {
             context.lineTo(this.state.x2-arrowWidth, arrowY + Component.editBoxSize)
             context.lineTo(this.state.x2-arrowWidth, arrowY - Component.editBoxSize)
             context.lineTo(this.state.x2, arrowY)
-            context.font = '18px verdana';
-            context.fillStyle = "rgb(0, 0, 125)"
+            context.stroke()
+            context.beginPath()
+            context.font = '500 16px sans-serif';
+            context.fillStyle = "rgb(0, 0, 0)"
             context.fillText(this.state.metadata.name, (this.state.x1 + this.state.x2)/2 - this.state.metadata.name.length*5 - 10, Math.max(this.state.y1, this.state.y2)+35)
             
             if (this.state.stock.in != null){
@@ -274,10 +289,12 @@ class Flow {
 
             if (this.state.selected){
                 context.beginPath()
-                context.strokeStyle = "rgb(0, 0, 125)"
-                context.fillStyle = "rgb(0, 0, 125)"
-                context.fillRect(this.state.x1-10, this.state.y1-10, 20, 20)
-                context.fillRect(this.state.x2-10, this.state.y2-10, 20, 20)
+                context.strokeStyle = "rgb(70, 70, 70)"
+                context.fillStyle = "white"
+                context.roundRect(this.state.x1-Component.editBoxSize/2, this.state.y1-Component.editBoxSize/2, Component.editBoxSize, Component.editBoxSize, 2)
+                context.fill()
+                context.roundRect(this.state.x2-Component.editBoxSize/2, this.state.y2-Component.editBoxSize/2, Component.editBoxSize, Component.editBoxSize, 2)
+                context.fill()
                 context.stroke()
                 context.strokeStyle = "rgb(0, 0, 0)"
             }

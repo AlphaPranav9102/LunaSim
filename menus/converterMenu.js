@@ -18,6 +18,7 @@ class ConverterMenu {
             return name != this.feature.state.metadata.name;
           });
         this.menu.converterEquation.value = this.feature.state.metadata.equation
+        this.menu.converterColor.value = this.feature.state.metadata.color
         this.menu.modalConverterOutside.style.display = "block"
 
         this.eventMethod = function(){
@@ -57,7 +58,9 @@ class ConverterMenu {
 
         self.feature.state.metadata = {
             name : self.menu.converterName.value,
-            equation : self.menu.converterEquation.value
+            equation : self.menu.converterEquation.value,
+            stroke : Component.colorset[self.menu.converterColor.value][0],
+            fill : Component.colorset[self.menu.converterColor.value][1]
         }
     }
 

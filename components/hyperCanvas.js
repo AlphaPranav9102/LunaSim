@@ -18,6 +18,8 @@ class HyperCanvas {
             integration_method: "euler",
             start_time: "0"
         }
+
+        this.latest = {}
     }
 
     // TODO: Get data from a page manager
@@ -144,42 +146,63 @@ class HyperCanvas {
 
     // calling all validation functions to see if input if for feature
     detectedInput(event, listener) {
+
+        if (Object.values(this.latest).length > 0 && event.type == "mousedown"){
+            this.addFeature(this.latest.feature, this.latest.drawable, this.latest.priority, true)
+            this.latest = {}
+        }
+
         var eventInfo = {
             x : event.pageX,
             y : event.pageY - this.pageOffsetY,
             type : listener
         }
 
+        var creation = false
         
         for (const key of Object.keys(this.features)){
-            if (this.features[key].feature.creation){
-                console.log(this.features[key].feature.type)
+            if (this.features[key].feature.state.creation  && this.features[key].feature.validate(eventInfo)){
+                console.log("mousedown", this.features[key].feature.type)
                 this.features[key].feature.input(eventInfo)
-                break
+                creation = true
             }
-            if (this.features[key].feature.validate(eventInfo)){
-                this.features[key].feature.input(eventInfo)
-            } 
         }
+        if (!creation){
+            for (const key of Object.keys(this.features)){
+                if (this.features[key].feature.validate(eventInfo)){
+                    this.features[key].feature.input(eventInfo)
+                } 
+            }
+        }
+
     }
 
     //add feature to setPeriodic and detectedInput loop
-    addFeature(feature, drawable = true, priority = 3) {
+    addFeature(feature, drawable = true, priority = 3, internal = false) {
         //todo: determine if redundant keys are useful here (Callback functions, Ans: maybe if method name changes in 2.x)
         //todo: setup id/name system
-        this.features[feature.name] = {
-            feature : feature,
-            verifyCallback : feature.validate,
-            inputCallback : feature.input,
-            drawCallback : feature.draw,
-            createdSignal : feature.created
+
+        if (internal) {
+            this.features[feature.name] = {
+                feature : feature,
+                verifyCallback : feature.validate,
+                inputCallback : feature.input,
+                drawCallback : feature.draw,
+                createdSignal : feature.created
+            }
+            
+            if (drawable){
+                var self = this
+                this.setPeriodic(feature.name + ".draw", function () { self.features[feature.name].feature.draw(self.context)}, 1, priority)
+            }
         }
-        
-        if (drawable){
-            var self = this
-            this.setPeriodic(feature.name + ".draw", function () { self.features[feature.name].feature.draw(self.context)}, 1, priority)
+        else {
+            this.latest = {
+                feature : feature,
+                drawable: drawable,
+                priority: priority
+            }
         }
-        
     }
 
     // start periodic and add interval tasks
@@ -198,6 +221,7 @@ class HyperCanvas {
                 }
             }
             //self.context.fillRect(0, 0, self.canvas.width, self.canvas.height)
+            
         }, 1, 1)
 
         this.size = [
@@ -209,7 +233,6 @@ class HyperCanvas {
         this.canvas.addEventListener("mousemove", function (event) {self.detectedInput(event, "mousemove")})
         this.canvas.addEventListener("click", function (event) {self.detectedInput(event, "click")})
         this.canvas.addEventListener("keydown", function (event) {
-            console.log(self.menuUsage)
             if (["KeyE", "Backspace"].includes(event.code) && self.menuUsage == 0){
                 self.detectedInput(event, event.code)
 

@@ -22,7 +22,10 @@ class Converter {
             move : false,
             metadata : {
                 name : "",
-                equation : ""
+                equation : "",
+                color: "black",
+                stroke: "rgb(117, 117, 117)",
+                fill: "rgb(217, 217, 217)"
             },
             center : {
                 x: null,
@@ -138,25 +141,27 @@ class Converter {
         }
         if (this.state.creation == false){
             context.beginPath()
-            context.strokeSt
+            context.strokeStyle=this.state.metadata.stroke
             context.arc(this.state.x, this.state.y, this.state.r, 0, 2 * Math.PI, false)
-            context.fillStyle = "white"
+            context.fillStyle = this.state.metadata.fill
             context.fill()
-            context.lineWidth = 5
+            context.lineWidth = 2.5
             context.stroke()
 
             if (this.state.selected){
                 context.beginPath()
-                context.strokeStyle = "rgb(0, 0, 125)"
-                context.fillStyle = "rgb(0, 0, 125)"
-                context.fillRect(this.state.x+this.state.rx-10, this.state.y+this.state.ry-10, 20, 20)
+                context.strokeStyle = this.state.metadata.stroke
+                context.fillStyle = "white"
+                context.roundRect(this.state.x+this.state.rx-Component.editBoxSize/2, this.state.y+this.state.ry-Component.editBoxSize/2, Component.editBoxSize, Component.editBoxSize, 2)
+                context.fill()
                 //context.fillRect(this.state.x-10, this.state.y-10, 20, 20)
                 context.stroke()
             }
 
-            context.font = '18px verdana';
-            context.fillStyle = "rgb(0, 0, 125)"
+            context.font = '500 16px sans-serif';
+            context.fillStyle = "rgb(0, 0, 0)"
             context.fillText(this.state.metadata.name, this.state.x - this.state.metadata.name.length*5, this.state.y+this.state.r+35)
+            context.stroke()
             
         }
     }

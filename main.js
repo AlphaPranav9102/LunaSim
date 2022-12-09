@@ -44,7 +44,7 @@ document.getElementById("converterSelector").onclick = function() {
 
 document.getElementById("connectorSelector").onclick = function() {
     let feature = new Connector(Date.now(), hyperCanvas)
-    hyperCanvas.addFeature(feature, true, 1)
+    hyperCanvas.addFeature(feature, true, 2)
 }
 
 window.addEventListener('resize', function() {
@@ -60,7 +60,8 @@ var stockMenu = new StockMenu(
         stockName : document.getElementById("stockName"),
         stockEquation : document.getElementById("stockEquation"),
         stockType : document.getElementById("stockType"),
-        stockSubmit : document.getElementById("stockSubmit")
+        stockSubmit : document.getElementById("stockSubmit"),
+        stockColor : document.getElementById("stockColor")
     },
     hyperCanvas
 )
@@ -86,7 +87,8 @@ var converterMenu = new ConverterMenu(
         converterName : document.getElementById("converterName"),
         converterEquation : document.getElementById("converterEquation"),
         converterType : document.getElementById("converterType"),
-        converterSubmit : document.getElementById("converterSubmit")
+        converterSubmit : document.getElementById("converterSubmit"),
+        converterColor : document.getElementById("converterColor")
     },
     hyperCanvas
 )

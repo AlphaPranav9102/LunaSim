@@ -31,7 +31,10 @@ class Stock{
             metadata : {
                 name : "",
                 equation : "",
-                stockType : false
+                stockType : false,
+                color: "black",
+                stroke: "rgb(117, 117, 117)",
+                fill: "rgb(217, 217, 217)"
             },
             center : {
                 x: null,
@@ -203,8 +206,8 @@ class Stock{
             return -1
         }
         for (var i = 0; i < 10; i++){
-            context.strokeStyle = "rgb(117, 117, 117)"
-            context.fillStyle = "rgb(217, 217, 217)"
+            context.strokeStyle = this.state.metadata.stroke
+            context.fillStyle = this.state.metadata.fill
             context.beginPath()
             context.lineWidth = 2.5
             if (this.state.selected) {context.lineWidth = 3}
@@ -214,7 +217,7 @@ class Stock{
 
             if (this.state.selected){
                 context.beginPath()
-                context.strokeStyle = "rgb(117, 117, 117)"
+                context.strokeStyle = this.state.metadata.stroke
                 context.fillStyle = "white"
                 context.roundRect(this.state.x-Component.editBoxSize/2, this.state.y-Component.editBoxSize/2, Component.editBoxSize, Component.editBoxSize, 2)
                 context.fill()

@@ -19,6 +19,7 @@ class StockMenu {
           });
         this.menu.stockEquation.value = this.feature.state.metadata.equation
         this.menu.stockType.checked = this.feature.state.metadata.stockType
+        this.menu.stockColor.value = this.feature.state.metadata.color
         this.menu.modalStockOutside.style.display = "block"
         this.eventMethod = function(){
             self.sendInfo(self)
@@ -61,7 +62,10 @@ class StockMenu {
         self.feature.state.metadata = {
             name : self.menu.stockName.value,
             equation : self.menu.stockEquation.value,
-            stockType : self.menu.stockType.checked
+            stockType : self.menu.stockType.checked,
+            color : self.menu.stockColor.value,
+            stroke : Component.colorset[self.menu.stockColor.value][0],
+            fill : Component.colorset[self.menu.stockColor.value][1]
         }
     }
 

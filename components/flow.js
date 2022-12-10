@@ -114,19 +114,14 @@ class Flow {
                 this.state.move = false
                 this.remap(event)
             }
-            isValidated = true
+            isValidated = false
             if (this.state.created == true){
                 this.state.created = false
                 this.hyperCanvas.getMenuText(this)
             }
         }
 
-        if (isValidated == true){
-            return true
-        }
-        else {
-            return false
-        }
+        return isValidated
     }
     input(event) {
         if (this.state.creation == true){

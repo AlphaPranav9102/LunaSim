@@ -1,9 +1,11 @@
 import { Component } from "./component.js"
+import { ContextManager } from "./contextManager.js"
+import { Background } from "./background.js"
 
 class HyperCanvas {
     constructor(canvas, frameRate) {
         this.canvas = canvas;
-        this.context = canvas.getContext('2d');
+        this.context = new ContextManager(canvas.getContext('2d'));
         this.periodicTasks = {};
         this.features = {};
         this.globalTick = 0;
@@ -18,7 +20,7 @@ class HyperCanvas {
             integration_method: "euler",
             start_time: "0"
         }
-
+        this.background = new Background(Date.now(), this)
         this.latest = {}
     }
 
@@ -59,7 +61,7 @@ class HyperCanvas {
                         equation: this.getFeature(this.features[feature].feature.state.flows.left).state.metadata.equation
                     }
                         
-                } catch {}
+                } catch (e) {console.log(e)}
 
                 try {
                     stockData.outflows[this.getFeature(this.features[feature].feature.state.flows.right).state.metadata.name] = {
@@ -67,7 +69,7 @@ class HyperCanvas {
                         values: [],
                         equation: this.getFeature(this.features[feature].feature.state.flows.right).state.metadata.equation
                     }
-                } catch {}
+                } catch (e) {console.log(e)}
                 
                 this.data.stocks[this.features[feature].feature.state.metadata.name] = stockData
 
@@ -153,12 +155,15 @@ class HyperCanvas {
         }
 
         var eventInfo = {
-            x : event.pageX,
-            y : event.pageY - this.pageOffsetY,
+            x : event.pageX - this.context.xOffset,
+            y : event.pageY - this.pageOffsetY - this.context.yOffset,
+            rawX: event.pageX,
+            rawY: event.pageY,
             type : listener
         }
 
         var creation = false
+
         
         for (const key of Object.keys(this.features)){
             if (this.features[key].feature.state.creation  && this.features[key].feature.validate(eventInfo)){
@@ -170,8 +175,16 @@ class HyperCanvas {
         if (!creation){
             for (const key of Object.keys(this.features)){
                 if (this.features[key].feature.validate(eventInfo)){
+                    console.log(this.features[key].feature.type)
                     this.features[key].feature.input(eventInfo)
+                    creation = true
                 } 
+            }
+        }
+
+        if (!creation) {
+            if (this.background.validate(eventInfo)){
+                this.background.input(eventInfo)
             }
         }
 
@@ -211,17 +224,7 @@ class HyperCanvas {
         setInterval(function () { self.runPeriodic() }, 1000/this.frameRate)
         this.setPeriodic("canvas.clear", function () {
             self.canvas.width += 0
-            self.context.fillStyle = "rgb(125, 125, 125)"
-            for (var x = 5; x < self.canvas.width; x += 15){
-                for (var y = 5; y < self.canvas.height; y += 15){
-                    self.context.strokeStyle = "rgb(200, 200, 200)"
-                    self.context.beginPath()
-                    self.context.arc(x, y, 0.5, 0, 2 * Math.PI, false)
-                    self.context.stroke()
-                }
-            }
-            //self.context.fillRect(0, 0, self.canvas.width, self.canvas.height)
-            
+            self.background.draw(self.context)
         }, 1, 1)
 
         this.size = [

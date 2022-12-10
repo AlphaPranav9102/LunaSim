@@ -81,10 +81,9 @@ class Connector {
                     this.state.deleted = true
                 }
             }
+            validated = false
         }
-        if (validated){
-            return true
-        }
+        return validated
     }
 
     input(event){

@@ -8,9 +8,9 @@ class Converter {
         this.state = {
             x : 0,
             y : 0,
-            rx : 0,
-            ry : 0,
-            r : 10,
+            rx : 30,
+            ry : 40,
+            r : 50,
             prevInteraction : {
                 x : 0,
                 y : 0,
@@ -94,15 +94,13 @@ class Converter {
                 this.state.resize = false
             }
             this.state.move = false
-            isValidated = true
+            isValidated = false
             if (this.state.created == true){
                 this.state.created = false
                 this.hyperCanvas.getMenuText(this)
             }
         }
-        if (isValidated){
-            return true
-        }
+        return isValidated
     }
 
     input(event) {
@@ -154,7 +152,6 @@ class Converter {
                 context.fillStyle = "white"
                 context.roundRect(this.state.x+this.state.rx-Component.editBoxSize/2, this.state.y+this.state.ry-Component.editBoxSize/2, Component.editBoxSize, Component.editBoxSize, 2)
                 context.fill()
-                //context.fillRect(this.state.x-10, this.state.y-10, 20, 20)
                 context.stroke()
             }
 

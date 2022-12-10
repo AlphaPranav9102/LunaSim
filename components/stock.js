@@ -111,7 +111,7 @@ class Stock{
                 this.state.resize = false
             }
             this.state.move = false
-            validated = true
+            validated = false
             if (this.state.created){
                 this.state.created = false
                 this.hyperCanvas.getMenuText(this)

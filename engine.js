@@ -7,6 +7,23 @@ export class Simulation {
         this.timesteps = [];
     }
 
+    /*
+    Wrapper for eval() that alerts user if there is a ReferenceError.  Does not catch any errors, only alerts.
+    */
+    safeEval(expression) {
+        var res;
+        try {
+            res = eval(expression);
+        } catch (e) {
+            if (e.name == "ReferenceError") {
+                alert("Incorrect Variable: " + e.message + "\nPlease check your equations try again.\nRemember to use $ before the name of a stock, converter, or flow.");
+            }
+
+            throw e; // throw error to stop execution
+        }
+        return res;
+    }
+
     /* 
     Replaces names in equation with values.
     Example: 'converter1*converter2+stock1' --> '(1)*(2)+(3)'
@@ -50,7 +67,7 @@ export class Simulation {
         for (var stockName in this.data.stocks) {
             let stock = this.data.stocks[stockName];
 
-            let value = eval(this.parseObject(stock["equation"]));
+            let value = this.safeEval(this.parseObject(stock["equation"]));
             
             stock["safeval"] = value;
             stock["values"] = [value];
@@ -61,15 +78,15 @@ export class Simulation {
 
             // initialize flows
             for (var flowName in stock["inflows"]) {
-                this.data.stocks[stockName]["inflows"][flowName]["values"] = [eval(this.parseObject(this.data.stocks[stockName]["inflows"][flowName]["equation"]))];
+                this.data.stocks[stockName]["inflows"][flowName]["values"] = [this.safeEval(this.parseObject(this.data.stocks[stockName]["inflows"][flowName]["equation"]))];
             }
             for (var flowName in stock["outflows"]) {
-                this.data.stocks[stockName]["outflows"][flowName]["values"] = [eval(this.parseObject(this.data.stocks[stockName]["outflows"][flowName]["equation"]))];
+                this.data.stocks[stockName]["outflows"][flowName]["values"] = [this.safeEval(this.parseObject(this.data.stocks[stockName]["outflows"][flowName]["equation"]))];
             }
         }
 
         for (var converterName in this.data.converters) {
-            this.data.converters[converterName]["values"] = [eval(this.parseObject(this.data.converters[converterName]["equation"]))];
+            this.data.converters[converterName]["values"] = [this.safeEval(this.parseObject(this.data.converters[converterName]["equation"]))];
         }
     }
 
@@ -113,9 +130,9 @@ export class Simulation {
             let flowEq = inflows[i]["equation"];
             if (flowEq.includes("#")) { // check if flow is a uniflow
                 flowEq = flowEq.replace('#', '');
-                sumInflow += Math.max(0, eval(this.parseObject(flowEq)));
+                sumInflow += Math.max(0, this.safeEval(this.parseObject(flowEq)));
             } else {
-                sumInflow += eval(this.parseObject(flowEq));
+                sumInflow += this.safeEval(this.parseObject(flowEq));
             }
         }
 
@@ -124,9 +141,9 @@ export class Simulation {
             let flowEq = outflows[i]["equation"];
             if (flowEq.includes("#")) { // check if flow is a uniflow
                 flowEq = flowEq.replace('#', '');
-                sumOutflow += Math.max(0, eval(this.parseObject(flowEq)));
+                sumOutflow += Math.max(0, this.safeEval(this.parseObject(flowEq)));
             } else {
-                sumOutflow += eval(this.parseObject(flowEq));
+                sumOutflow += this.safeEval(this.parseObject(flowEq));
             }
         }
 
@@ -137,7 +154,6 @@ export class Simulation {
     Runs model using Euler's method.
     */
     euler() {
-        console.log(this.startTime, this.endTime, this.dt);
         for (var t = this.startTime + this.dt; parseFloat(t.toFixed(5)) <= parseFloat(this.endTime.toFixed(5)); t += this.dt) { // (skip start time as that was covered in this.initObjects())
             this.timesteps.push(parseFloat(t.toFixed(5)));
             
@@ -161,17 +177,17 @@ export class Simulation {
             // Update values for all flows
             for (var stockName in this.data.stocks) {
                 for (var inflow in this.data.stocks[stockName]["inflows"]) {
-                    this.data.stocks[stockName]["inflows"][inflow]["values"].push(eval(this.parseObject(this.data.stocks[stockName]["inflows"][inflow]["equation"])));
+                    this.data.stocks[stockName]["inflows"][inflow]["values"].push(this.safeEval(this.parseObject(this.data.stocks[stockName]["inflows"][inflow]["equation"])));
                 }
                 for (var outflow in this.data.stocks[stockName]["outflows"]) {
-                    this.data.stocks[stockName]["outflows"][outflow]["values"].push(eval(this.parseObject(this.data.stocks[stockName]["outflows"][outflow]["equation"])));
+                    this.data.stocks[stockName]["outflows"][outflow]["values"].push(this.safeEval(this.parseObject(this.data.stocks[stockName]["outflows"][outflow]["equation"])));
                 }
             }
 
             // Update the values of all converters
             for (var converter in this.data.converters) {
                 let converterEq = this.data.converters[converter]["equation"];
-                this.data.converters[converter]["values"].push(eval(this.parseObject(converterEq)));
+                this.data.converters[converter]["values"].push(this.safeEval(this.parseObject(converterEq)));
             }
 
         }
@@ -256,17 +272,17 @@ export class Simulation {
             // Update values for all flows
             for (var stockName in this.data.stocks) {
                 for (var inflow in this.data.stocks[stockName]["inflows"]) {
-                    this.data.stocks[stockName]["inflows"][inflow]["values"].push(eval(this.parseObject(this.data.stocks[stockName]["inflows"][inflow]["equation"])));
+                    this.data.stocks[stockName]["inflows"][inflow]["values"].push(this.safeEval(this.parseObject(this.data.stocks[stockName]["inflows"][inflow]["equation"])));
                 }
                 for (var outflow in this.data.stocks[stockName]["outflows"]) {
-                    this.data.stocks[stockName]["outflows"][outflow]["values"].push(eval(this.parseObject(this.data.stocks[stockName]["outflows"][outflow]["equation"])));
+                    this.data.stocks[stockName]["outflows"][outflow]["values"].push(this.safeEval(this.parseObject(this.data.stocks[stockName]["outflows"][outflow]["equation"])));
                 }
             }
 
             // Update the values of all converters
             for (var converter in this.data.converters) {
                 let converterEq = this.data.converters[converter]["equation"];
-                this.data.converters[converter]["values"].push(eval(this.parseObject(converterEq)));
+                this.data.converters[converter]["values"].push(this.safeEval(this.parseObject(converterEq)));
             }
         }
     }
@@ -324,7 +340,7 @@ export class Simulation {
     /*
     Returns all the names of the objects (stocks, flows, and converters) in the model.
     */
-    getAllNames(stocks = false) {
+    getAllNames(stocks=false) {
         var res = ["timesteps"];
         if (stocks){
             var res = [];

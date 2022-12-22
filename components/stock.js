@@ -245,6 +245,7 @@ class Stock{
             }
             this.hyperCanvas.getFeature(this.state.flows.left).state.x2 = this.state.x
             this.hyperCanvas.getFeature(this.state.flows.left).state.y2 = this.state.y + this.state.b/2
+            this.hyperCanvas.getFeature(this.state.flows.left).setBounds()
             
         }
         if (this.state.flows.right != null){
@@ -255,6 +256,7 @@ class Stock{
             }
             this.hyperCanvas.getFeature(this.state.flows.right).state.x1 = this.state.x + this.state.a
             this.hyperCanvas.getFeature(this.state.flows.right).state.y1 = this.state.y + this.state.b/2
+            this.hyperCanvas.getFeature(this.state.flows.right).setBounds()
         }
 
     }

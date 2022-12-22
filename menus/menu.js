@@ -20,7 +20,6 @@ export class Menu {
             }
         }
         else if (type == "names"){
-            console.log(Component.name, variable, Component.name.includes(variable))
             if (Component.name.includes(variable)){
                 Menu.writeToDom(dom, message)
                 return false

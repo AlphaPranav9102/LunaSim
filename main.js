@@ -192,9 +192,7 @@ function uploadProcess(event){
 
 function onReaderLoad(event) {
     var data = JSON.parse(event.target.result);
-    console.log(data);
 
-    console.log("Uploaded")
     for (const stock of data.state.stock){
         let feature = new Stock(Date.now(), hyperCanvas)
         feature.state = stock

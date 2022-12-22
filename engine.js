@@ -129,7 +129,7 @@ export class Simulation {
         for (var i in inflows) {
             let flowEq = inflows[i]["equation"];
             if (flowEq.includes("#")) { // check if flow is a uniflow
-                flowEq = flowEq.replace('#', '');
+                flowEq = flowEq.replace("#", "");
                 sumInflow += Math.max(0, this.safeEval(this.parseObject(flowEq)));
             } else {
                 sumInflow += this.safeEval(this.parseObject(flowEq));
@@ -141,6 +141,7 @@ export class Simulation {
             let flowEq = outflows[i]["equation"];
             if (flowEq.includes("#")) { // check if flow is a uniflow
                 flowEq = flowEq.replace('#', '');
+                console.log(flowEq)
                 sumOutflow += Math.max(0, this.safeEval(this.parseObject(flowEq)));
             } else {
                 sumOutflow += this.safeEval(this.parseObject(flowEq));
@@ -161,7 +162,7 @@ export class Simulation {
             for (var stockName in this.data.stocks) {
                 let stock = this.data.stocks[stockName];
 
-                if (stock["isNN"] == "true") { // check if stock is non-negative
+                if (stock["isNN"] == true) { // check if stock is non-negative
                     stock["values"].push(Math.max(0,(stock["safeval"] + this.dydt(stock) * this.dt)));
                 } else {
                     stock["values"].push(stock["safeval"] + this.dydt(stock) * this.dt);

@@ -55,21 +55,30 @@ class HyperCanvas {
                 }
 
                 try {
+                    var addingEq = ""
+                    if (this.getFeature(this.features[feature].feature.state.flows.left).state.metadata.flowType){
+                        addingEq = "#"
+                    }
                     stockData.inflows[this.getFeature(this.features[feature].feature.state.flows.left).state.metadata.name] = {
                         name: this.getFeature(this.features[feature].feature.state.flows.left).state.metadata.name,
                         values: [],
-                        equation: this.getFeature(this.features[feature].feature.state.flows.left).state.metadata.equation
+                        equation: addingEq + this.getFeature(this.features[feature].feature.state.flows.left).state.metadata.equation
                     }
                         
-                } catch (e) {console.log(e)}
+                } catch (e) {}
 
                 try {
+                    var addingEq = ""
+                    if (this.getFeature(this.features[feature].feature.state.flows.right).state.metadata.flowType){
+                        addingEq = "#"
+                    }
+
                     stockData.outflows[this.getFeature(this.features[feature].feature.state.flows.right).state.metadata.name] = {
                         name: this.getFeature(this.features[feature].feature.state.flows.right).state.metadata.name,
                         values: [],
-                        equation: this.getFeature(this.features[feature].feature.state.flows.right).state.metadata.equation
+                        equation: addingEq + this.getFeature(this.features[feature].feature.state.flows.right).state.metadata.equation
                     }
-                } catch (e) {console.log(e)}
+                } catch (e) {}
                 
                 this.data.stocks[this.features[feature].feature.state.metadata.name] = stockData
 
@@ -167,7 +176,6 @@ class HyperCanvas {
         
         for (const key of Object.keys(this.features)){
             if (this.features[key].feature.state.creation  && this.features[key].feature.validate(eventInfo)){
-                console.log("mousedown", this.features[key].feature.type)
                 this.features[key].feature.input(eventInfo)
                 creation = true
             }
@@ -175,7 +183,6 @@ class HyperCanvas {
         if (!creation){
             for (const key of Object.keys(this.features)){
                 if (this.features[key].feature.validate(eventInfo)){
-                    console.log(this.features[key].feature.type)
                     this.features[key].feature.input(eventInfo)
                     creation = true
                 } 

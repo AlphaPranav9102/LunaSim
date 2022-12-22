@@ -30,7 +30,6 @@ export class Background {
         else if (event.type == "click"){
             this.state.selected = false
             validated = false
-            console.log(this.state)
         }
 
         return validated
@@ -44,22 +43,16 @@ export class Background {
     }
 
     input(event) {
-        //console.log(this.state)
         if (this.state.selected) {
             this.state.x += event.rawX - this.state.prevInteraction.x
             this.state.y += event.rawY - this.state.prevInteraction.y
             this.remap(event)
             this.cache(event)
-            console.log()
-            //console.log(this.state.x, this.state.y)
         }
     }
 
     draw(context) {
         context.fillStyle = "rgb(125, 125, 125)"
-        console.log(context.xOffset, context.yOffset)
-        //console.log(15*Math.ceil(-this.hyperCanvas.context.xOffset/15), 15*Math.ceil(-this.hyperCanvas.context.xOffset/15) + this.hyperCanvas.canvas.width)
-
         for (var x =  15*Math.ceil(-context.xOffset/15); x < 15*Math.ceil(-context.xOffset/15) + this.hyperCanvas.canvas.width; x += 15){
             for (var y =  15*Math.ceil(-context.yOffset/15); y < 15*Math.ceil(-context.yOffset/15) + this.hyperCanvas.canvas.height; y += 15){
                 context.strokeStyle = "rgb(200, 200, 200)"
@@ -71,7 +64,6 @@ export class Background {
     }
 
     remap(event){
-        //console.log(this.state)
         this.hyperCanvas.context.xOffset = this.state.x
         this.hyperCanvas.context.yOffset = this.state.y
     }

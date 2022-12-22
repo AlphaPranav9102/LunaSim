@@ -67,7 +67,6 @@ class StockMenu {
             stroke : Component.colorset[self.menu.stockColor.value][0],
             fill : Component.colorset[self.menu.stockColor.value][1]
         }
-        console.log(self.feature.state.metadata)
     }
 
 }

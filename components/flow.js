@@ -68,7 +68,6 @@ class Flow {
             }
         }
         else if (event.type == "mousedown") {
-            console.log(this.state)
             if (this.state.creation == true){
                 isValidated = true
             }
@@ -211,7 +210,7 @@ class Flow {
             var arrowWidth = 15
             var arrowY = null
             context.strokeStyle = "rgb(70, 70, 70)"
-            if (Math.abs(this.state.y2 - this.state.y1) > 15){
+            if (Math.abs(this.state.y2 - this.state.y1) > 20){
                 var radiusInner = 10
                 var radiusOuter = 15
                 var flowWidth = this.state.width/3

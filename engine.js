@@ -13,7 +13,11 @@ export class Simulation {
     safeEval(expression) {
         var res;
         try {
-            res = eval(expression);
+            if (expression[0] == "#") { // check if the expression is a uniflow
+                res = Math.max(0, eval(expression.slice(1)));
+            } else {
+                res = eval(expression);
+            }
         } catch (e) {
             if (e.name == "ReferenceError") {
                 alert("Incorrect Variable: " + e.message + "\nPlease check your equations try again.\nRemember to use $ before the name of a stock, converter, or flow.");
@@ -127,25 +131,12 @@ export class Simulation {
         // Use eval to get value of flows
         let sumInflow = 0;
         for (var i in inflows) {
-            let flowEq = inflows[i]["equation"];
-            if (flowEq.includes("#")) { // check if flow is a uniflow
-                flowEq = flowEq.replace("#", "");
-                sumInflow += Math.max(0, this.safeEval(this.parseObject(flowEq)));
-            } else {
-                sumInflow += this.safeEval(this.parseObject(flowEq));
-            }
+            sumInflow += this.safeEval(this.parseObject(inflows[i]["equation"]));
         }
 
         let sumOutflow = 0;
         for (var i in outflows) {
-            let flowEq = outflows[i]["equation"];
-            if (flowEq.includes("#")) { // check if flow is a uniflow
-                flowEq = flowEq.replace('#', '');
-                console.log(flowEq)
-                sumOutflow += Math.max(0, this.safeEval(this.parseObject(flowEq)));
-            } else {
-                sumOutflow += this.safeEval(this.parseObject(flowEq));
-            }
+            sumOutflow += this.safeEval(this.parseObject(outflows[i]["equation"]));
         }
 
         return sumInflow - sumOutflow;

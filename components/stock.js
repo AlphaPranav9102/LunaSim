@@ -52,6 +52,8 @@ class Stock{
         this.state.center.y = this.state.y + this.state.b/2
 
         var validated = false
+
+        
         
         if (this.state.deleted == true){
             return false
@@ -72,6 +74,7 @@ class Stock{
             }
         }
         else if (event.type == "mousedown"){
+            console.log([this.state.x, this.state.y], [event.x, event.y], this.component)
             if (this.state.creation){
                 validated = true;
             }

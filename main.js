@@ -146,7 +146,9 @@ var processEnv = function () {
         }
     }
     else {
+        console.log(document.getElementById("envName").value)
         hyperCanvas.state.env_name = document.getElementById("envName").value
+        document.getElementById("setupSelector").innerText = document.getElementById("envName").value
         hyperCanvas.state.dt = document.getElementById("envDT").value
         hyperCanvas.state.end_time = document.getElementById("envTime").value
         if (document.getElementById("envType1").checked){
@@ -159,7 +161,7 @@ var processEnv = function () {
     document.getElementById("modalEnvOutside").classList.toggle("hidden")
 }
 
-document.getElementById("envSubmit").onclick = processEnv
+document.getElementById("envSubmit").addEventListener("click", processEnv)
 document.getElementById("setupSelector").onclick = processEnv
 
 
@@ -190,29 +192,57 @@ function uploadProcess(event){
     reader.readAsText(event.target.files[0]);
 }
 
+function sleepFor(sleepDuration){
+    var now = new Date().getTime();
+    while(new Date().getTime() < now + sleepDuration){ /* Do nothing */ }
+}
+
 function onReaderLoad(event) {
     var data = JSON.parse(event.target.result);
+    console.log(data.state)
+    var featuresAdd = []
+
+
+    for (const feature of Object.values(hyperCanvas.features)){
+        feature.feature.state.deleted = true
+    }
 
     for (const stock of data.state.stock){
-        let feature = new Stock(Date.now(), hyperCanvas)
-        feature.state = stock
-        hyperCanvas.addFeature(feature, true)
+        featuresAdd.push(new Stock(Date.now(), hyperCanvas))
+        featuresAdd[featuresAdd.length-1].state = stock
+        featuresAdd[featuresAdd.length-1].setBounds()
+        hyperCanvas.addFeature(featuresAdd[featuresAdd.length-1], true, 3, true)
+        console.log(stock)
+        Component.name.push(stock.metadata.name)
+        sleepFor(10)
     }
     for (const flow of data.state.flow){
-        let feature = new Flow(Date.now(), hyperCanvas)
-        feature.state = flow
-        hyperCanvas.addFeature(feature, true)
+        featuresAdd.push(new Flow(Date.now(), hyperCanvas))
+        featuresAdd[featuresAdd.length-1].state = flow
+        featuresAdd[featuresAdd.length-1].setBounds()
+        hyperCanvas.addFeature(featuresAdd[featuresAdd.length-1], true, 3, true)
+        console.log(flow)
+        Component.name.push(flow.metadata.name)
+        sleepFor(10)
     }
     for (const converter of data.state.converter){
-        let feature = new Converter(Date.now(), hyperCanvas)
-        feature.state = converter
-        hyperCanvas.addFeature(feature, true)
+        featuresAdd.push(new Converter(Date.now(), hyperCanvas))
+        featuresAdd[featuresAdd.length-1].state = converter
+        hyperCanvas.addFeature(featuresAdd[featuresAdd.length-1], true, 3, true)
+        console.log(converter)
+        Component.name.push(converter.metadata.name)
+        sleepFor(10)
     }
     for (const connector of data.state.connector){
-        let feature = new Connector(Date.now(), hyperCanvas)
-        feature.state = connector
-        hyperCanvas.addFeature(feature, true)
+        featuresAdd.push(new Connector(Date.now(), hyperCanvas))
+        featuresAdd[featuresAdd.length-1].state = connector
+        hyperCanvas.addFeature(featuresAdd[featuresAdd.length-1], true, 2, true)
+        console.log(connector)
+        sleepFor(10)
     }
+
+    hyperCanvas.context.xOffset = 0
+    hyperCanvas.context.yOffset = 0
 
     document.getElementById("envName").value = data.env_name
     document.getElementById("envDT").value = data.dt
@@ -224,5 +254,5 @@ function onReaderLoad(event) {
         document.getElementById("envType2").checked = true
     }
 
-    Component.name = data.name
+    Component.name = data.names
 }

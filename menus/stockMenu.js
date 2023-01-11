@@ -14,6 +14,7 @@ class StockMenu {
         self = this
         this.feature = feature
         this.menu.stockName.value = this.feature.state.metadata.name
+        console.log(Component.name)
         Component.name = Component.name.filter(name => {
             return name != this.feature.state.metadata.name;
           });

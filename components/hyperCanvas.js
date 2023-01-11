@@ -93,7 +93,9 @@ class HyperCanvas {
                 this.data.state.converter.push(this.features[feature].feature.state)
             }
             else {
-                this.data.state[this.features[feature].feature.type].push(this.features[feature].feature.state)
+                if (!this.features[feature].feature.state.deleted){
+                    this.data.state[this.features[feature].feature.type].push(this.features[feature].feature.state)
+                }
             }
         }
 
@@ -217,12 +219,15 @@ class HyperCanvas {
             }
         }
         else {
+            console.log("test")
             this.latest = {
                 feature : feature,
                 drawable: drawable,
                 priority: priority
             }
         }
+
+        console.log(this.features)
     }
 
     // start periodic and add interval tasks

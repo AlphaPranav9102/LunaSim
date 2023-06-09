@@ -77,9 +77,10 @@ export default function Page() {
                                 </div>
                             </div>
                             <div className="w-full mt-4 bg-gray-900 flex flex-col gap-[12px]">
-                                { dashboardItems.map(environment => (
+                                { dashboardItems.map((environment, key) => (
                                     <DocumentCard 
                                         name={environment["name"]}
+                                        key={key}
                                         editHistory={environment["editHistory"]} 
                                         id={environment["id"]} 
                                         setDashboardItems={setDashboardItems}                                    

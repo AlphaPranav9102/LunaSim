@@ -161,6 +161,11 @@ class Converter {
             context.font = '500 16px sans-serif';
             context.fillStyle = "rgb(0, 0, 0)"
             context.fillText(this.state.metadata.name, this.state.x - this.state.metadata.name.length*5, this.state.y+this.state.r+35)
+            context.fillText(
+                this.state.metadata.equation.toString().slice(0, 5), 
+                this.state.x - this.state.metadata.equation.slice(5).length*5 - 15,
+                this.state.y + 5
+            )
             context.stroke()
             
         }

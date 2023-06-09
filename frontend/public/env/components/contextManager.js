@@ -63,4 +63,18 @@ export class ContextManager {
         this.context.arc(x+this.xOffset, y+this.yOffset, r, start, end, isCC)
     }
 
+    arcTo(x1, y1, x2, y2, r){
+        this.context.arcTo(
+            x1 + this.xOffset,
+            y1 + this.yOffset,
+            x2 + this.xOffset,
+            y2 + this.yOffset,
+            r
+        )
+    }
+
+    measureText(text){
+        return this.context.measureText(text)
+    }
+
 }

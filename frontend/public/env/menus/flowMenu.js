@@ -13,6 +13,7 @@ class FlowMenu {
     getInfo(feature){
         self = this
         this.feature = feature
+        console.log(this.feature.state)
         this.menu.flowName.value = this.feature.state.metadata.name
         Component.name = Component.name.filter(name => {
             return name != this.feature.state.metadata.name;
@@ -30,7 +31,7 @@ class FlowMenu {
 
     validation() {
         return (
-            Menu.validation(self.menu.flowName.name, "names", "flowError", "Name taken by component") 
+            Menu.validation(self.menu.flowName.value, "names", "flowError", "Name taken by component") 
             && Menu.validation(self.menu.flowName.value, "blank", "flowError", "Name is blank")
             && Menu.validation(self.menu.flowEquation.value, "blank", "flowError", "Equation is blank")
         )
@@ -41,12 +42,14 @@ class FlowMenu {
             return false
         }
 
+        console.log(self.feature.state)
+
         Component.name.push(self.menu.flowName.value)
         self.state.using = false
         self.menu.modalFlowOutside.style.display = "none"
         this.menu.flowSubmit.removeEventListener("click", this.eventMethod)
 
-        try{self.hyperCanvas.getFeature(self.feature.state.stock.out).state.flows.right = self.menu.flowName.value} catch {}
+        try{self.hyperCanvas.getFeature(self.feature.state.stock.out).state.flows.right = self.menu.flowName.value; console.log("when --------------------------")} catch {}
         try{self.hyperCanvas.getFeature(self.feature.state.stock.in).state.flows.left = self.menu.flowName.value} catch {}
 
         for (const feature of Object.values(self.hyperCanvas.getType("connector"))){
@@ -63,6 +66,8 @@ class FlowMenu {
             equation : self.menu.flowEquation.value,
             flowType : self.menu.flowType.checked
         }
+
+        console.log(self.feature.state)
 
     }
 

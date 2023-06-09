@@ -14,12 +14,17 @@ export class Menu {
                 Menu.writeToDom(dom, message)
                 return false
             }
+            else if (variable.includes(" ")){
+                Menu.writeToDom(dom, "No Spaces")
+                return false
+            }
             else {
                 Menu.writeToDom(dom, "")
                 return true
             }
         }
         else if (type == "names"){
+            console.log(Component.name, variable)
             if (Component.name.includes(variable)){
                 Menu.writeToDom(dom, message)
                 return false

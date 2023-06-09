@@ -120,15 +120,41 @@ class Connector {
         else {
             context.strokeStyle = "rgb(0, 0, 0)"
         }
-        context.moveTo(this.hyperCanvas.getFeature(this.state.connection.in).state.center.x, this.hyperCanvas.getFeature(this.state.connection.in).state.center.y)
         try {
+            this.canvas_arrow(
+                context,
+                this.hyperCanvas.getFeature(this.state.connection.in).state.center.x,
+                this.hyperCanvas.getFeature(this.state.connection.in).state.center.y,
+                this.hyperCanvas.getFeature(this.state.connection.out).state.center.x,
+                this.hyperCanvas.getFeature(this.state.connection.out).state.center.y,
+                10
+            )
             context.lineTo(this.hyperCanvas.getFeature(this.state.connection.out).state.center.x, this.hyperCanvas.getFeature(this.state.connection.out).state.center.y)
         }
         catch (e) {
-            context.lineTo(this.state.connection.out.x, this.state.connection.out.y)
+            this.canvas_arrow(
+                context,
+                this.hyperCanvas.getFeature(this.state.connection.in).state.center.x,
+                this.hyperCanvas.getFeature(this.state.connection.in).state.center.y,
+                this.state.connection.out.x,
+                this.state.connection.out.y,
+                10
+            )
         }
         context.stroke()
         context.strokeStyle = "rgb(0, 0, 0)"
+    }
+
+    canvas_arrow(context, fromx, fromy, tox, toy, r) {
+        var headlen = 10; // length of head in pixels
+        var dx = tox - fromx;
+        var dy = toy - fromy;
+        var angle = Math.atan2(dy, dx);
+        context.moveTo(fromx, fromy);
+        context.lineTo(tox, toy);
+        context.lineTo(tox - headlen * Math.cos(angle - Math.PI / 6), toy - headlen * Math.sin(angle - Math.PI / 6));
+        context.moveTo(tox, toy);
+        context.lineTo(tox - headlen * Math.cos(angle + Math.PI / 6), toy - headlen * Math.sin(angle + Math.PI / 6));
     }
 
     onObject(x, y, type){

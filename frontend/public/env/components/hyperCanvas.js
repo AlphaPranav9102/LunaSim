@@ -184,6 +184,16 @@ class HyperCanvas {
         }
         if (!creation){
             for (const key of Object.keys(this.features)){
+                if (creation == true){
+                    eventInfo = {
+                        x : Math.pow(10, 7),
+                        y : Math.pow(10, 7),
+                        rawX: Math.pow(10, 7),
+                        rawY: Math.pow(10, 7),
+                        type : listener
+                    }
+                }
+                
                 if (this.features[key].feature.validate(eventInfo)){
                     this.features[key].feature.input(eventInfo)
                     creation = true

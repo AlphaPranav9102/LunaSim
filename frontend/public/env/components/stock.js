@@ -255,6 +255,7 @@ class Stock{
             
         }
         if (this.state.flows.right != null){
+            console.log("when --------------------------")
             if (this.hyperCanvas.getFeature(this.state.flows.right).state.stock.in == null){
                 this.hyperCanvas.getFeature(this.state.flows.right).state.x2 = (this.state.x + this.state.a + 
                     (this.hyperCanvas.getFeature(this.state.flows.right).state.x2 

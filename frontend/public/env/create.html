@@ -40,7 +40,7 @@
         </div>
         <div class="inline float-right">
             <button id="runSelector"
-                class="mt-2 rounded-lg w-20 h-10 ml-4 mr-5 bg-[#22c55e] text-white font-semibold text-xl">
+                class="mt-2 select-none rounded-lg w-20 h-10 ml-4 mr-5 bg-[#22c55e] text-white font-semibold text-xl">
                 Run
             </button>
         </div>
@@ -163,10 +163,10 @@
             </div>
         </div>
     </div>
-    <canvas id="modelCanvas" class="focus-none" width='1702' height='1487' tabindex='1'></canvas>
+    <canvas id="modelCanvas" class="focus:border-0 focus:ring-0" width='1702' height='1487' tabindex='1'></canvas>
 
     <div class="text-center absolute right-[5px] bottom-[20px]">
-        <button class="text-white bg-black font-semibold rounded-lg text-md px-5 py-2.5 mr-2 mb-2" id="graphsToggle"
+        <button class="text-white select-none bg-black font-semibold rounded-lg text-md px-5 py-2.5 mr-2 mb-2" id="graphsToggle"
             type="button" onclick="document.getElementById('drawerGraph').classList.toggle('hidden')">
             Graphs
         </button>

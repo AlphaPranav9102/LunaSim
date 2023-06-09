@@ -35,7 +35,7 @@ class Flow {
                 x: null,
                 y: null
             },
-            width: 10,
+            width: 15,
             deleted: false
         }
 
@@ -44,7 +44,7 @@ class Flow {
     }
 
     validate(event, hitbox=false){
-        this.state.center.x = (this.state.x1 + this.state.x2)/2
+        this.state.center.x = (this.state.x1 + this.state.x2)/2 - 5
         this.state.center.y = (this.state.y1 + this.state.y2)/2
 
         var isValidated = false
@@ -53,6 +53,7 @@ class Flow {
             return false
         }
         else if (event.type == "KeyE"){
+            console.log(this.state)
             if (this.state.selected == true){
                 this.hyperCanvas.getMenuText(this)
             } 
@@ -86,6 +87,7 @@ class Flow {
                 isValidated = true
             }
             else if (this.component.validateBounding("main", event)){
+                console.log(this.state)
                 if (!hitbox){
                     if (this.state.selected){
                         this.state.move = true
@@ -97,6 +99,7 @@ class Flow {
             }
             else {
                 if (!hitbox){
+                    console.log("wrong")
                     this.state.selected = false
                 }
             }
@@ -163,7 +166,7 @@ class Flow {
         this.component.resetBounding()
         this.component.setBounding("main", {
             type: "rect",
-            x: this.state.x1,
+            x: this.state.x1-this.state.width/2,
             y: this.state.y1-this.state.width/2,
             a: Math.abs(this.state.x1 - this.state.x2 + 15)/2,
             b: this.state.width
@@ -173,7 +176,7 @@ class Flow {
             x: (this.state.x1 + this.state.x2 - 15)/2-this.state.width/2,
             y: Math.min(this.state.y1, this.state.y2)-10,
             a: this.state.width,
-            b: Math.max(this.state.y1, this.state.y2) + this.state.width/2
+            b: Math.abs(this.state.y1 - this.state.y2) + this.state.width/2
         })
         this.component.setBounding("main", {
             type: "rect",
@@ -217,7 +220,7 @@ class Flow {
                 var abs = Math.abs(this.state.y1 - this.state.y2) / (this.state.y1 - this.state.y2)
                 var direction = flowWidth * abs
 
-                context.beginPath()
+                
                 context.moveTo(this.state.x1, this.state.y1)
 
                 context.lineTo((this.state.x1 + this.state.x2-arrowWidth)/2-flowWidth - radiusInner, this.state.y1)
@@ -230,11 +233,19 @@ class Flow {
                 context.lineTo(this.state.x2-arrowWidth, this.state.y2)
                 context.moveTo(this.state.x2-arrowWidth, this.state.y2)
 
-               
+                context.stroke();
+
+                context.fillStyle = "rgb(255, 255, 255)"
+                context.moveTo(this.state.center.x-2, this.state.center.y)
+                context.beginPath()
+                context.arc(this.state.center.x - 2, this.state.center.y, 10, 0, 2 * Math.PI, false)
+                context.fill()
+                context.lineWidth = 2.5
+                context.stroke()
                 //context.lineTo(this.state.x1, this.state.y1 - direction)
                 //context.lineTo((this.state.x1 + this.state.x2-arrowWidth)/2-flowWidth, this.state.y1 - direction)
                 context.lineWidth = 3;
-                context.stroke();
+                
 
                 arrowY = this.state.y2
 
@@ -250,6 +261,14 @@ class Flow {
                 //context.lineTo(this.state.x2-arrowWidth, this.state.y1 - direction)
                 context.lineWidth = 3;
                 context.stroke();
+
+                context.fillStyle = "rgb(255, 255, 255)"
+                context.moveTo(this.state.center.x-2, this.state.y1)
+                context.beginPath()
+                context.arc(this.state.center.x - 2, this.state.y1, 10, 0, 2 * Math.PI, false)
+                context.fill()
+                context.lineWidth = 2.5
+                context.stroke()
 
                 arrowY = this.state.y1
             }
@@ -305,6 +324,7 @@ class Flow {
         for (const features of Object.keys(metadata)){
             var feature = metadata[features].feature
             if (this.boundingBox(feature.state.x, feature.state.y, feature.state.a/2, feature.state.b, [this.state.x2, this.state.y2])){
+                console.log('bounded right side')
                 console.log(this.state.metadata.name)
                 this.state.stock.in = feature.state.metadata.name
                 feature.state.flows.left = this.state.metadata.name
@@ -312,9 +332,15 @@ class Flow {
                 this.state.y2 = feature.state.y + feature.state.b/2
             }
             else if (feature.state.flows.left == this.state.metadata.name){
+                console.log('disconnected')
                 feature.state.flows.left = null
+                if (this.state.stock.in == feature.state.metadata.name){
+                    console.log('disconnected')
+                    this.state.stock.in = null
+                }
             }
             if (this.boundingBox(feature.state.x + feature.state.a/2, feature.state.y, feature.state.a/2, feature.state.b, [this.state.x1, this.state.y1])){
+                console.log("when --------------------------")
                 this.state.stock.out = feature.state.metadata.name
                 feature.state.flows.right = this.state.metadata.name
                 this.state.x1 = feature.state.x + feature.state.a
@@ -322,8 +348,13 @@ class Flow {
             }
             else if (feature.state.flows.right == this.state.metadata.name){
                 feature.state.flows.right = null
+                if (this.state.stock.out == feature.state.metadata.name){
+                    this.state.stock.out = null
+                }
             }
         }
+
+        this.setBounds()
     }
 }
 

@@ -2,8 +2,6 @@ from fastapi import APIRouter, FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 import uvicorn
 
-load_dotenv()
-
 from src.api.auth import router as auth_router
 from src.api.user import router as user_router
 from src.constants import PROD

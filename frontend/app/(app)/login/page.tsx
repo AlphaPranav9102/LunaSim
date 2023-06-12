@@ -13,7 +13,7 @@ export default function Page() {
           return
       }else{
           console.log('axios')
-          axios.post('http://localhost:8000/auth/login', {
+          axios.post('https://equinox.onrender.com/auth/login', {
               username: name,
               password: password
           })

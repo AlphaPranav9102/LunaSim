@@ -11,11 +11,11 @@ interface documentProps {
 
 export default function DocumentCard(props: documentProps) {
 
-    const url = `http://localhost:3000/env/create.html?id=${props.id}&username=${fetchUser()}`
+    const url = `https://equinox-sim.vercel.app/env/create.html?id=${props.id}&username=${fetchUser()}`
 
     const deleteEnv = () => {
         var jwtToken = fetchToken()
-        axios.post('http://localhost:8000/user/delete_env', {
+        axios.post('https://equinox.onrender.com/user/delete_env', {
             jwt: jwtToken,
             id: props.id
         })

@@ -18,7 +18,7 @@ console.log(queryString)
 const urlParams = new URLSearchParams(queryString);
 console.log(urlParams.get("id"))
 
-axios.post('http://localhost:8000/user/get_env', {
+axios.post('https://equinox.onrender.com/user/get_env', {
     username: urlParams.get("username"), 
     id: urlParams.get("id")
 }).then(function (response) {
@@ -294,7 +294,7 @@ axios.post('http://localhost:8000/user/get_env', {
 
     setInterval(() => {
         console.log(hyperCanvas.getData())
-        axios.post('http://localhost:8000/user/save_env', {
+        axios.post('https://equinox.onrender.com/user/save_env', {
             id: urlParams.get("id"),
             username: urlParams.get("username"),
             data:  JSON.stringify(hyperCanvas.getData())

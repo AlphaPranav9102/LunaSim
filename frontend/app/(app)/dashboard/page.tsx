@@ -14,7 +14,7 @@ export default function Page() {
 
     useEffect(() => {
         var jwtToken = fetchToken()
-        axios.post('http://localhost:8000/user/dashboard', {
+        axios.post('https://equinox.onrender.com/user/dashboard', {
             jwt: jwtToken,
         })
         .then(function (response) {
@@ -28,7 +28,7 @@ export default function Page() {
 
     const newEnv = () => {
         var jwtToken = fetchToken()
-        axios.post('http://localhost:8000/user/add_env', {
+        axios.post('https://equinox.onrender.com/user/add_env', {
             jwt: jwtToken,
         })
         .then(function (response) {

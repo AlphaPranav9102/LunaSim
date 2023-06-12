@@ -15,6 +15,7 @@ export const fetchToken = (token) =>{
 export const fetchUser = (token) =>{
     return localStorage.getItem('accountUser')
 }
+
 export function RequireToken({children}) {
     
     useEffect(() => {

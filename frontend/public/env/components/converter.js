@@ -6,6 +6,7 @@ class Converter {
         this.type = "converter"
         this.hyperCanvas = hyperCanvas
         this.state = {
+            id: Math.random().toString(36).substr(2, 9),
             x : 0,
             y : 0,
             rx : 30,
@@ -20,12 +21,16 @@ class Converter {
             selected : false,
             resize : false,
             move : false,
+            inputGenerated: false,
             metadata : {
                 name : "",
                 equation : "",
                 color: "black",
                 stroke: "rgb(117, 117, 117)",
-                fill: "rgb(217, 217, 217)"
+                fill: "rgb(217, 217, 217)",
+                ghosted: false,
+                ghostID: null,
+                prevName: "",
             },
             center : {
                 x: null,
@@ -43,7 +48,7 @@ class Converter {
         }
 
         else if (event.type == "KeyE"){
-            if (this.state.selected == true){
+            if (this.state.selected == true && this.state.metadata.ghosted == false){
                 this.hyperCanvas.getMenuText(this)
             } 
         }
@@ -53,6 +58,16 @@ class Converter {
                 Component.name = Component.name.filter(name => {
                     return name != this.state.metadata.name;
                   });
+                
+                if (this.state.metadata.ghosted == false){
+                    var metadata = this.hyperCanvas.getType("converter")
+                    for (const features of Object.keys(metadata)){
+                        var feature = metadata[features].feature
+                        if (feature.state.metadata.ghosted == true && feature.state.metadata.ghostID ==  this.state.metadata.name){
+                            feature.state.deleted = true
+                        }
+                    }
+                }
             }
         }
         else if (event.type == "mousedown"){
@@ -143,6 +158,12 @@ class Converter {
         if (this.state.creation == false){
             context.beginPath()
             context.strokeStyle=this.state.metadata.stroke
+            if (this.state.metadata.ghosted){
+                context.setLineDash([5, 5]);
+            }
+            else {
+                context.setLineDash([]);
+            }
             context.arc(this.state.x, this.state.y, this.state.r, 0, 2 * Math.PI, false)
             context.fillStyle = this.state.metadata.fill
             context.fill()
@@ -151,6 +172,7 @@ class Converter {
 
             if (this.state.selected){
                 context.beginPath()
+                context.setLineDash([]);
                 context.strokeStyle = this.state.metadata.stroke
                 context.fillStyle = "white"
                 context.roundRect(this.state.x+this.state.rx-Component.editBoxSize/2, this.state.y+this.state.ry-Component.editBoxSize/2, Component.editBoxSize, Component.editBoxSize, 2)
@@ -160,14 +182,33 @@ class Converter {
 
             context.font = '500 16px sans-serif';
             context.fillStyle = "rgb(0, 0, 0)"
-            context.fillText(this.state.metadata.name, this.state.x - this.state.metadata.name.length*5, this.state.y+this.state.r+35)
+            if (this.state.metadata.ghosted){
+                context.fillText(this.state.metadata.ghostID, this.state.x - this.state.metadata.ghostID.length*5, this.state.y+this.state.r+35)
+            }
+            else {
+                context.fillText(this.state.metadata.name, this.state.x - this.state.metadata.name.length*5, this.state.y+this.state.r+35)
+            }
+            /*
             context.fillText(
                 this.state.metadata.equation.toString().slice(0, 5), 
                 this.state.x - this.state.metadata.equation.slice(5).length*5 - 15,
                 this.state.y + 5
             )
+            */
             context.stroke()
             
+        }
+    }
+
+    changeGhostNames(){
+        var metadata = this.hyperCanvas.getType("converter")
+        console.log(this.state.metadata.prevName)
+        for (const features of Object.keys(metadata)){
+            var feature = metadata[features].feature
+            if (feature.state.metadata.ghostID == this.state.metadata.prevName){
+                console.log(feature)
+                feature.state.metadata.ghostID = this.state.metadata.name
+            }
         }
     }
 

@@ -8,7 +8,7 @@ export class Menu {
         }
     }
 
-    static validation(variable, type, dom = "", message = "") {
+    static validation(variable, type, dom = "", message = "", hypercanvas = "") {
         if (type == "blank"){
             if (variable.trim() == ""){
                 Menu.writeToDom(dom, message)
@@ -33,6 +33,16 @@ export class Menu {
                 Menu.writeToDom(dom, "")
                 return true
             }
+        }
+        else if (type == "ghost"){
+            if (Component.name.includes(variable)){
+                if (hypercanvas.getFeature(variable) != null && hypercanvas.getFeature(variable).type == "converter"){
+                    Menu.writeToDom(dom, "")
+                    return true
+                }
+            }
+            Menu.writeToDom(dom, message)
+            return false
         }
         return true
     }

@@ -4,7 +4,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width">
-    <title>LunaSim - Create</title>
+    <title>Equinox. - Create</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/apexcharts" type="module"></script>
     <link rel="stylesheet" href="https://unpkg.com/flowbite@1.5.5/dist/flowbite.min.css" />
@@ -144,12 +144,12 @@
                 <h1 class="text-xl mt-4 font-semibold">Name<span id="converterError"
                         class="text-red-600 text-lg float-right"></span></h1>
                 <input type="text" id="converterName" name="convName"
-                    class="border-[1.5px] border-gray-300 mt-3 w-full h-10 rounded-lg px-2 text-xl">
+                    class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5">
                 <h1 class="text-xl mt-3 font-semibold">Equation</h1>
                 <input type="text" id="converterEquation" name="convEquation"
-                    class="border-[1.5px]  border-gray-300 mt-3 w-full h-10 rounded-lg px-2 text-xl">
+                    class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5">
                 <h1 class="text-xl mt-3 font-semibold">Color</h1>
-                <select name="converterColor" id="converterColor" class="border-[1.5px] border-gray-300 mt-3 w-full h-10 rounded-lg px-2 text-xl">
+                <select name="converterColor" id="converterColor" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5">
                     <option value="black">Black</option>
                     <option value="green">Green</option>
                     <option value="blue">Blue</option>
@@ -157,12 +157,21 @@
                     <option value="purple">Purple</option>
                     <option value="orange">Orange</option>
                 </select>
-                <button id="converterSubmit"
-                    class="text-2xl font-bold float-right mt-8 mr-0 ml-2 p-2 px-5 rounded-lg bg-[#2563EB] text-white border-black">Save</button>
+                <div class="mt-4">
+                    <input type="checkbox" id="converterType" name="converterType" class="float-left">
+                        <h1 class="text-[16px] text-regular pl-3 -mt-[6px] float-left">Ghost</h1>
+                    </input>
+                    <button 
+                        id="converterSubmit"
+                        class="float-right mt-8 mr-0 ml-2 p-2 px-5 text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-semibold rounded-lg text-sm bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-blue-800">
+                        Save
+                    </button>
                     <h1 class="text-xl mt-5 font-semibold text-red" id="converterError"></h1>
+                </div>
             </div>
         </div>
     </div>
+
     <canvas id="modelCanvas" class="focus:border-0 focus:ring-0" width='1702' height='1487' tabindex='1'></canvas>
 
     <div class="text-center absolute right-[5px] bottom-[20px]">
@@ -182,7 +191,7 @@
                         d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z"
                         clip-rule="evenodd"></path>
                 </svg>Graphs</h5>
-            <div id="graphContainer" class="w-full h-[18rem]"></div>
+            <div id="graphContainer" class="gap-2 flex flex-row w-full h-[18rem]"></div>
         </div>
     </div>
 

@@ -107,8 +107,9 @@ class HyperCanvas {
     }
 
     set size(sizing) {
-        this.canvas.width = sizing[0]
-        this.canvas.height = sizing[1]
+        this.canvas.width = sizing[0] * window.devicePixelRatio
+        this.canvas.height = sizing[1] * window.devicePixelRatio
+        this.context.scale(window.devicePixelRatio, window.devicePixelRatio)
     }
 
     // get every widget reference and return it to the calling function

@@ -1,8 +1,6 @@
-import { RequireToken, fetchToken, fetchUser } from "../auth"
+import Link from "next/link"
+import { fetchToken, fetchUser } from "../auth"
 import axios from "axios"
-import { Dropdown } from 'flowbite';
-import type { DropdownInterface } from "flowbite";
-import { redirect } from "next/navigation";
 
 interface documentProps {
     name: String,
@@ -13,7 +11,7 @@ interface documentProps {
 
 export default function DocumentCard(props: documentProps) {
 
-    const url = `/env/create.html?id=${props.id}&username=${fetchUser()}`
+    const url = `http://localhost:3000/env/create.html?id=${props.id}&username=${fetchUser()}`
 
     const deleteEnv = () => {
         var jwtToken = fetchToken()
@@ -29,15 +27,24 @@ export default function DocumentCard(props: documentProps) {
         });
     }
 
+    const copyToClipboard = () => {
+        navigator.clipboard.writeText(url)
+    }
+
     return(
         <div className="w-full h-20 bg-gray-700 rounded-md py-2 px-4">   
             <div className="mb-2">
-                <a href={url}>
+                <Link href={url}>
                     <img className="select-none inline h-6 w-6 rounded-md mr-4" src="https://replit.com/cdn-cgi/image/width=48,quality=80,format=auto/https://storage.googleapis.com/replit/images/1664475688613_6389b0b7355db425d8a6f234809ddd35.jpeg"/>
                     <h1 className="select-none inline text-md font-semibold mr-4">{props.name}</h1>
                     <h1 className="select-none inline text-sm font-regular -mt-1">{props.editHistory}</h1>
-                </a>
-                <button className="float-right -mr-4 text-sm select-none" onClick={deleteEnv}><svg xmlns="http://www.w3.org/2000/svg" className="fill-white" height="20" viewBox="0 -960 960 960" width="48"><path d="M261-120q-24.75 0-42.375-17.625T201-180v-570h-41v-60h188v-30h264v30h188v60h-41v570q0 24-18 42t-42 18H261Zm438-630H261v570h438v-570ZM367-266h60v-399h-60v399Zm166 0h60v-399h-60v399ZM261-750v570-570Z"/></svg></button>
+                </Link>
+                <button className="float-right text-sm select-none w-2 font-bold mt-[4px]" onClick={deleteEnv}>
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="#ffffff" height="10px" width="10px" version="1.1" id="Capa_1" viewBox="0 0 460.775 460.775">
+                        <path d="M285.08,230.397L456.218,59.27c6.076-6.077,6.076-15.911,0-21.986L423.511,4.565c-2.913-2.911-6.866-4.55-10.992-4.55  c-4.127,0-8.08,1.639-10.993,4.55l-171.138,171.14L59.25,4.565c-2.913-2.911-6.866-4.55-10.993-4.55  c-4.126,0-8.08,1.639-10.992,4.55L4.558,37.284c-6.077,6.075-6.077,15.909,0,21.986l171.138,171.128L4.575,401.505  c-6.074,6.077-6.074,15.911,0,21.986l32.709,32.719c2.911,2.911,6.865,4.55,10.992,4.55c4.127,0,8.08-1.639,10.994-4.55  l171.117-171.12l171.118,171.12c2.913,2.911,6.866,4.55,10.993,4.55c4.128,0,8.081-1.639,10.992-4.55l32.709-32.719  c6.074-6.075,6.074-15.909,0-21.986L285.08,230.397z"/>
+                    </svg>
+                </button>
+                <button className="float-right mr-4 text-sm select-none w-2" onClick={copyToClipboard}>🔗</button>
                 
             </div>
             <div>

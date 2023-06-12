@@ -10,6 +10,7 @@ import { LineGraph } from './components/vis/LineGraph.js'
 import { Modal } from './components/vis/Modal.js';
 import { Simulation } from './engine.js'
 import { Component } from './components/component.js'
+import { Table } from'./components/vis/Table.js'
 
 const queryString = window.location.search;
 console.log(queryString)
@@ -120,7 +121,7 @@ axios.post('http://localhost:8000/user/get_env', {
 
         var lines = new LineGraph(
             "graphContainer",
-            "Graph",
+            "Data over time",
             {},
             {
                 formula: function(xName, yName) {
@@ -131,6 +132,16 @@ axios.post('http://localhost:8000/user/get_env', {
                 allOptions: sim.getAllNames()
             },
             modal
+        )
+
+        var table = new Table("graphContainer")
+
+        table.generateTable(
+            function(xName, yName) {
+                return [sim.getValues(xName), sim.getValues(yName)]
+            },
+            "timesteps",
+            sim.getAllNames(true)
         )
     })
 
@@ -297,7 +308,28 @@ axios.post('http://localhost:8000/user/get_env', {
        
     }, 15000)
 
+    hyperCanvas.size = [
+        window.innerWidth,
+        window.innerHeight
+    ]
+
 })
 .catch(function (error) {
     console.log(error, 'error');
 });
+
+function toggleConverter(){
+    console.log(document.getElementById("converterType").checked)
+    if (document.getElementById("converterType").checked == true){
+        document.getElementById("converterColor").disabled = true
+        document.getElementById("converterEquation").disabled = true
+    }
+    else {
+        document.getElementById("converterColor").disabled = false
+        document.getElementById("converterEquation").disabled = false
+    }
+    
+}
+
+document.getElementById("converterType").addEventListener("click", toggleConverter);
+

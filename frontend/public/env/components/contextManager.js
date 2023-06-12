@@ -34,8 +34,16 @@ export class ContextManager {
         this.context.roundRect(x+this.xOffset, y+this.yOffset, a, b, r)
     }
 
+    setLineDash(data){
+        this.context.setLineDash(data)
+    }
+
     fill() {
         this.context.fill()
+    }
+
+    scale(x, y){
+        this.context.scale(x, y)
     }
 
     stroke() {
@@ -75,6 +83,14 @@ export class ContextManager {
 
     measureText(text){
         return this.context.measureText(text)
+    }
+
+    closePath() {
+        this.context.closePath()
+    }
+
+    bezierCurveTo(cp1x, cp1y, cp2x, cp2y, x, y){
+        this.context.bezierCurveTo(cp1x, cp1y, cp2x, cp2y, x, y)
     }
 
 }

@@ -1,8 +1,5 @@
 "use client"
 
-
-
-import { useSession, signIn, signOut } from "next-auth/react"
 import { GeneralNavbar } from "../_components/GeneralNavbar"
 import type { NextPage } from 'next'
 import { RequireToken } from "./auth"

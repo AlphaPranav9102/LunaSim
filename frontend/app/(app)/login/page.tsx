@@ -1,6 +1,5 @@
 "use client"
 
-import { GeneralNavbar } from "@/app/_components/GeneralNavbar";
 import { useState } from "react";
 import axios from "axios"
 import { fetchToken, setToken, setUser } from "../auth";

@@ -7,7 +7,7 @@ class LineGraph {
         this.modal = modal
 
         this.companionDiv = document.createElement("div")
-        this.companionDiv.classList.add("p-4", "border-2", "border-gray-200", "rounded-lg")
+        this.companionDiv.classList.add("p-4",  "rounded-lg")
         this.companionDiv.style.width = "500px"
         this.companionDiv.id = this.uuid
 
@@ -68,7 +68,7 @@ class LineGraph {
         this.generatedData = []
         for (const names of this.selectedOptionsY){
             [this.xAxis, this.yAxis] = this.formula(this.selectedOptionsX, names)
-            console.log(this.xAxis, this.yAxis)
+            console.log(this.formula(this.selectedOptionsX, names))
             this.generatedData.push({
                 name: names.toString(),
                 data: this.xAxis.reduce((acc, current, index) => {
@@ -83,7 +83,8 @@ class LineGraph {
         var formStringY = ``
 
         var self = this
-        this.modal.setCallBackClose(function () {
+        this.modal.setCallBackClose(function (event) {
+            event.preventDefault();
             self.pushEdit()
         })
 
@@ -151,6 +152,8 @@ class LineGraph {
         this.graph.state.series = this.generatedData
 
         this.graph.update()
+
+        this.companionDiv.innerHTML = `<h1 class="w-full text-xl font-semibold h-8">Graph</h1>` + this.companionDiv.innerHTML
     }
 }
 

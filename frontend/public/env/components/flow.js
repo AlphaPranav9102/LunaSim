@@ -292,6 +292,9 @@ class Flow {
             }
             context.stroke();
 
+            if (this.state.stock.out == null){
+                this.drawCloud(context, this.state.x1 - 10, this.state.y1+3)
+            }
             if (this.state.selected){
                 context.beginPath()
                 context.strokeStyle = "rgb(70, 70, 70)"
@@ -303,7 +306,22 @@ class Flow {
                 context.stroke()
                 context.strokeStyle = "rgb(0, 0, 0)"
             }
+            
         }
+    }
+    drawCloud(context, x, y) {
+        var scale = 8
+        context.beginPath();
+        context.arc(x, y, 60/scale, Math.PI * 0.5, Math.PI * 1.5);
+        context.arc(x + 70/scale, y - 60/scale, 70/scale, Math.PI * 1, Math.PI * 1.85);
+        context.arc(x + 152/scale, y - 45/scale, 50/scale, Math.PI * 1.37, Math.PI * 1.91);
+        context.arc(x + 200/scale, y, 60/scale, Math.PI * 1.5, Math.PI * 0.5);
+        context.moveTo(x + 200/scale, y + 60/scale);
+        context.lineTo(x, y + 60/scale);
+        context.strokeStyle = '#000000';
+        context.stroke();
+        context.fillStyle = '#ffffff';
+        context.fill()
     }
     boundingBox(x, y, a, b, point){
         if (x + a < x){

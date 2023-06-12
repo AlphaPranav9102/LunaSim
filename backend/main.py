@@ -1,4 +1,3 @@
-from dotenv import load_dotenv  # type: ignore
 from fastapi import APIRouter, FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 import uvicorn

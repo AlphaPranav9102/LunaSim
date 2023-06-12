@@ -63,7 +63,6 @@ pycparser==2.21
 pydantic==1.10.8
 PyJWT==2.7.0
 pymongo==4.3.3
-python-dotenv==1.0.0
 python-multipart==0.0.6
 pytz==2023.3
 PyYAML==6.0
@@ -120,7 +119,6 @@ pycparser==2.21
 pydantic==1.10.8
 PyJWT==2.7.0
 pymongo==4.3.3
-python-dotenv==1.0.0
 python-multipart==0.0.6
 pytz==2023.3
 PyYAML==6.0
